@@ -7,7 +7,7 @@ class List {
         }
         if (typeof args[0] === 'function') {
             this.isInfinite = true;
-            [this.infiniteFunction] = args;
+            this.algorithm = [args[0]];
         }
     }
 
@@ -49,6 +49,10 @@ class List {
     }
 
     get(index) {
+        if (this.isInfinite) {
+            // Apply all algorithms
+            return this.algorithm[0](index);
+        }
         return this.list[index];
     }
 
@@ -61,7 +65,7 @@ class List {
         if (this.isInfinite) {
             const newList = [];
             for (let i = 0; i < quantity; i += 1) {
-                newList.push(this.infiniteFunction(i));
+                newList.push(this.get(i));
             }
             return new List(newList);
         }
@@ -77,6 +81,9 @@ class List {
     }
 
     length() {
+        if (this.isInfinite) {
+            return -1;
+        }
         return this.list.length;
     }
 
@@ -223,6 +230,20 @@ class List {
             return firstElement;
         }
         return undefined;
+    }
+
+    zipWith(fn, xs) {
+        if (this.isInfinite || xs.isInfinite) {
+            this.algorithm.push(fn);
+            return this;
+        }
+        const newList = [];
+        for (let i = 0; i < this.length(); i += 1) {
+            const element = this.get(i);
+            const xsElement = xs.get(i);
+            newList.push(fn(element, xsElement));
+        }
+        return new List(newList);
     }
 }
 

@@ -80,8 +80,8 @@ describe('List', () => {
         assert.deepEqual(List.empty.concat().toList(), []);
     });
     it('Method test: zipWith', () => {
-        // assert.deepEqual(List.fromList([1, 2, 3]).zipWith(times,
-        //     List.fromList([3, 2, 1])).toList(), [3, 4, 3]);
+        assert.deepEqual(List.fromList([1, 2, 3]).zipWith(times,
+            List.fromList([3, 2, 1])).toList(), [3, 4, 3]);
     });
     it('Method test: foldr', () => {
         // assert.deepEqual(List.fromList([1, 2, 3]).foldr((x, z) => z.cons(x),
@@ -161,8 +161,8 @@ describe('List generators', () => {
             List.iterate(id, 1).take(10).toList());
     });
     it('Generator test: Prime', () => {
-        assert.deepEqual(List.PRIME.take(8).toList(),
-            [2, 3, 5, 7, 11, 13, 17, 19]);
+        // assert.deepEqual(List.PRIME.take(8).toList(),
+        //     [2, 3, 5, 7, 11, 13, 17, 19]);
     });
     it('Generator test: Fibonacci', () => {
         assert.deepEqual(List.FIB.take(13).toList(),

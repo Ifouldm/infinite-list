@@ -49,7 +49,7 @@ All test inputs are valid and should result in a defined result.
 - [x] List.cycle(xs) => an infinite list of repetitions of xs ( equals xs if xs is infinite )
 - [x] List.replicate(n,x) => a finite list of length n, every element of which is x
 - [x] List.fromList(xs) => xs converted to a list ( an Array must be a valid xs )
-- [x] List.PRIME, List.FIB, List.PI => ( must not require () )
+- [ ] List.PRIME, List.FIB, List.PI => ( must not require () )
 
 ---
 ## Instance methods
