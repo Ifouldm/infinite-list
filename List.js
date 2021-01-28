@@ -7,7 +7,7 @@ class List {
         }
         if (typeof args[0] === 'function') {
             this.isInfinite = true;
-            this.algorithm = [args[0]];
+            this.algorithms = [args[0]];
         }
     }
 
@@ -15,10 +15,12 @@ class List {
         return new List();
     }
 
+    static get ALL() {
+        return new List((a) => a);
+    }
+
     static get PRIME() {
-        return new List(() => {
-            // stub
-        });
+        return List.ALL.filter(List.isPrime);
     }
 
     static get FIB() {
@@ -31,6 +33,15 @@ class List {
         });
     }
 
+    static isPrime(val) {
+        for (let i = 2; i < Math.ceil(Math.sqrt(val)); i += 1) {
+            if (val % i === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     static fibonacci(index) {
         if (index === 0) return 0;
         if (index === 1) return 1;
@@ -38,7 +49,7 @@ class List {
     }
 
     head() {
-        return this.list[0] || undefined;
+        return this.get(0);
     }
 
     tail() {
@@ -49,9 +60,13 @@ class List {
     }
 
     get(index) {
+        let output = index;
         if (this.isInfinite) {
-            // Apply all algorithms
-            return this.algorithm[0](index);
+            for (let f = 0; f < this.algorithms.length; f += 1) {
+                const algo = this.algorithms[f];
+                output = algo(output);
+            }
+            return output;
         }
         return this.list[index];
     }
@@ -62,15 +77,11 @@ class List {
 
     // TODO: Negative numbers
     take(quantity) {
-        if (this.isInfinite) {
-            const newList = [];
-            for (let i = 0; i < quantity; i += 1) {
-                newList.push(this.get(i));
-            }
-            return new List(newList);
+        const newList = [];
+        for (let i = 0; i < quantity; i += 1) {
+            newList.push(this.get(i));
         }
-        const quant = Math.min(quantity, this.length());
-        return new List(this.list.slice(0, quant));
+        return new List(newList);
     }
 
     drop(quantity) {
@@ -82,7 +93,7 @@ class List {
 
     length() {
         if (this.isInfinite) {
-            return -1;
+            return Infinity;
         }
         return this.list.length;
     }
@@ -136,6 +147,12 @@ class List {
     }
 
     filter(filterFunction) {
+        if (this.isInfinite) {
+            const filteredList = new List(this.algorithms[0]);
+            filteredList.algorithms = this.algorithms.slice();
+            filteredList.algorithms.push(filterFunction);
+            return filteredList;
+        }
         const newList = [];
         this.list.forEach((element) => {
             if (filterFunction(element)) {
@@ -234,7 +251,7 @@ class List {
 
     zipWith(fn, xs) {
         if (this.isInfinite || xs.isInfinite) {
-            this.algorithm.push(fn);
+            this.algorithms.push(fn);
             return this;
         }
         const newList = [];

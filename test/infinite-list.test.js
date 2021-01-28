@@ -160,6 +160,10 @@ describe('List generators', () => {
         assert.deepEqual(List.replicate(10, 1).toList(),
             List.iterate(id, 1).take(10).toList());
     });
+    it('Generator test: All', () => {
+        assert.deepEqual(List.ALL.take(10).toList(),
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    });
     it('Generator test: Prime', () => {
         // assert.deepEqual(List.PRIME.take(8).toList(),
         //     [2, 3, 5, 7, 11, 13, 17, 19]);
@@ -171,6 +175,7 @@ describe('List generators', () => {
 });
 describe('Temporary tests', () => {
     it('Temporary tests', () => {
-        assert.deepEqual(List.fibonacci(5), 5);
+        assert.deepEqual(List.ALL.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert.deepEqual(List.ALL.filter((a) => a > 5).algorithms[1].toString(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
 });
