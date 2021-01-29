@@ -30,36 +30,49 @@ describe('List', () => {
     it('Method test: head', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).head(), 1);
         assert.deepEqual(List.fromList([]).head(), undefined);
+        assert.deepEqual(List.ALL.head(), 0);
+        assert.deepEqual(List.PI.head(), 3);
     });
     it('Method test: tail', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).tail().toList(), [2, 3]);
         assert.deepEqual(List.fromList([]).tail().toList(), []);
+        // assert.deepEqual(List.ALL.tail().take(5).toList(), [1, 2, 3, 4, 5]);
     });
     it('Method test: init', () => {
         assert.deepEqual(List.fromList([]).init().toList(), []);
         assert.deepEqual(List.fromList([1, 2, 3]).init().toList(), [1, 2]);
         assert.deepEqual(List.fromList([5, 6, 7]).init().toList(), [5, 6]);
+        assert.deepEqual(List.ALL.init().take(5).toList(), [0, 1, 2, 3, 4]);
     });
     it('Method test: last', () => {
         assert.deepEqual(List.fromList([]).last(), undefined);
         assert.deepEqual(List.fromList([1, 2, 3]).last(), 3);
         assert.deepEqual(List.fromList([5, 6, 7]).last(), 7);
+        assert.deepEqual(List.ALL.last(), undefined);
     });
     it('Method test: get', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).get(0), 1);
         assert.deepEqual(List.fromList([1, 2, 3]).get(1), 2);
         assert.deepEqual(List.fromList([1, 2, 3]).get(2), 3);
+        assert.deepEqual(List.fromList([1, 2, 3]).get(6), undefined);
+        assert.deepEqual(List.ALL.get(3), 3);
     });
     it('Method test: take', () => {
         assert.deepEqual(List.fromList([1, 2, 3, 4]).take(3).toList(), [1, 2, 3]);
+        assert.deepEqual(List.fromList([1, 2, 3, 4]).take(5).toList(), [1, 2, 3, 4]);
+        assert.deepEqual(List.fromList([1, 2, 3, 4]).take(-2).toList(), [3, 4]);
+        assert.deepEqual(List.empty.take(5).toList(), []);
     });
     it('Method test: drop', () => {
         assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(1).toList(), [2, 3, 4]);
+        assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(2).toList(), [3, 4]);
+        assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(6).toList(), []);
     });
     it('Method test: nil', () => {
         assert.deepEqual(List.empty.nil(), true);
         assert.deepEqual(List.fromList([1]).nil(), false);
         assert.deepEqual(List.fromList([1, 2]).nil(), false);
+        assert.deepEqual(List.ALL.nil(), false);
     });
     it('Method test: cons', () => {
         assert.deepEqual(List.fromList([2, 3]).cons(1).toList(), [1, 2, 3]);
@@ -71,6 +84,7 @@ describe('List', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).append(List.empty).toList(), [1, 2, 3]);
         assert.deepEqual(List.fromList([1, 2, 3]).append(List.fromList([1, 2, 3])).toList(),
             [1, 2, 3, 1, 2, 3]);
+        assert.deepEqual(List.ALL.append(List.fromList([5, 6, 7])).take(3).toList(), [0, 1, 2]);
     });
     it('Method test: slice', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).slice(1).toList(), [2, 3]);
@@ -79,6 +93,7 @@ describe('List', () => {
     });
     it('Method test: map', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).map((x) => x * x).toList(), [1, 4, 9]);
+        assert.deepEqual(List.fromList([11, 22, 4]).map(inc).toList(), [12, 23, 5]);
     });
     it('Method test: filter', () => {
         assert.deepEqual(List.fromList([1, 2, 3])
@@ -95,27 +110,31 @@ describe('List', () => {
             List.fromList([1, 2, 3])]).concat().toList(), [1, 2, 3, 1, 2, 3]);
         assert.deepEqual(List.empty.concat().toList(), []);
     });
+    it('Method test: concatMap', () => {
+        assert.deepEqual(List.fromList([List.fromList([1, 2, 3]),
+            List.fromList([1, 2, 3])]).concatMap(inc).toList(), [2, 3, 4, 2, 3, 4]);
+    });
     it('Method test: zipWith', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).zipWith(times,
             List.fromList([3, 2, 1])).toList(), [3, 4, 3]);
     });
     it('Method test: foldr', () => {
-        // assert.deepEqual(List.fromList([1, 2, 3]).foldr((x, z) => z.cons(x),
-        //     List.empty).toList(), [1, 2, 3]);
+        assert.deepEqual(List.fromList([1, 2, 3]).foldr((x, z) => z.cons(x),
+            List.empty).toList(), [1, 2, 3]);
         // assert.deepEqual(List.empty.foldr(() => _ | _, Math.E), Math.E);
     });
     it('Method test: foldl', () => {
-        // assert.deepEqual(List.fromList([1, 2, 3]).foldl(plus, 0), 6);
+        assert.deepEqual(List.fromList([1, 2, 3]).foldl(plus, 0), 6);
         // assert.deepEqual(List.fromList([1, 2, 3]).foldl(inc, 0),
         //     List.fromList([1, 2, 3]).length());
     });
     it('Method test: scanr', () => {
-        // assert.deepEqual(List.fromList([1, 2, 3]).scanr(plus, 0).toList(), [6, 5, 3, 0]);
-        // assert.deepEqual(List.empty.scanr(times, 1).toList(), [1]);
+        assert.deepEqual(List.fromList([1, 2, 3]).scanr(plus, 0).toList(), [6, 5, 3, 0]);
+        assert.deepEqual(List.empty.scanr(times, 1).toList(), [1]);
     });
     it('Method test: scanl', () => {
-        // assert.deepEqual(List.fromList([1, 2, 3]).scanl(plus, 0).toList(), [0, 1, 3, 6]);
-        // assert.deepEqual(List.empty.scanl(times, 1).toList(), [1]);
+        assert.deepEqual(List.fromList([1, 2, 3]).scanl(plus, 0).toList(), [0, 1, 3, 6]);
+        assert.deepEqual(List.empty.scanl(times, 1).toList(), [1]);
     });
     it('Method test: elem', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).elem(0), false);
@@ -149,6 +168,7 @@ describe('List', () => {
         assert.deepEqual(List.empty.the(), undefined);
     });
 });
+
 describe('List generators', () => {
     it('Method test: empty', () => {
         assert.deepEqual(List.empty.toList(), []);
@@ -193,8 +213,69 @@ describe('List generators', () => {
             [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9]);
     });
 });
+
 describe('Temporary tests', () => {
     it('isPrime tests', () => {
         assert.equal(List.isPrime(4), false);
     });
+});
+
+describe('Codewars tests', () => {
+    it('Take / drop tests', () => {
+        const l = List.fromList([1, 2, 3, 4]);
+        assert.deepEqual(l.take(0).toList(), []);
+        assert.deepEqual(l.take(3).toList(), [1, 2, 3]);
+        assert.deepEqual(l.take(-1).toList(), [4]);
+        assert.deepEqual(l.take(1e10).toList(), [1, 2, 3, 4]);
+        assert.deepEqual(l.drop(0).toList(), [1, 2, 3, 4]);
+        assert.deepEqual(l.drop(3).toList(), [4]);
+        assert.deepEqual(l.drop(-1).toList(), [1, 2, 3]);
+
+    // expected [ 4 ] to deeply equal [ 1, 2, 3, 4 ]
+    });
+    // it('Concat tests', () => {
+    //     const l = List.fromList([[1, 2, 3]]);
+    //     const m = List.fromList([List.fromList([1, 1]), List.repeat(2)]);
+
+    //     assert.deepEqual(l.concat(), []);
+    //     assert.deepEqual([[1, 2, 3], [1, 2, 3]].concat(), []);
+    //     assert.deepEqual(m.concat().take(3), []);
+    //     // expected [ 1, 1 ] to deeply equal [ 1, 1, 2 ]
+    // });
+
+    // it('Various tests', () => {
+    //     l = List.empty;
+
+    //     assert.deepEqual(l.concat(), []);
+    //     assert.deepEqual(l.nil(), []);
+    //     assert.deepEqual(l.any((x) => x === 1), []);
+    //     assert.deepEqual(l.all(Boolean), []);
+    //     assert.deepEqual(l.elem(0), []);
+    //     assert.deepEqual(l.elemIndex(0), []);
+    //     assert.deepEqual(l.find(Boolean), []);
+    //     assert.deepEqual(l.findIndex(Boolean), []);
+
+    //     // expected undefined to deeply equal -1
+    // });
+
+    // it('zipWith tests', () => {
+    //     const l0 = List.iterate(inc, 0); const l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; const
+    //         l2 = l0.take(10);
+
+    //     assert.deepEqual(l1 === l2, []);
+    //     assert.deepEqual(l1 === l2, []);
+    //     assert.deepEqual(l0.zipWith(times, l1), []);
+
+    //     // unknown
+    // });
+    // it('iterate tests', () => {
+    //     l = List.iterate(inc, 0).take(5);
+
+    //     l.the();
+    //     List.iterate(inc, 0).take(1001).length();
+    //     List.iterate(inc, 0).take(1001).reverse().length();
+    //     List.iterate(inc, 0).findIndex((x) => x > 1000);
+
+    //     // unknown
+    // });
 });

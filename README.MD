@@ -70,12 +70,12 @@ All test inputs are valid and should result in a defined result.
 - [x] list.filter(fn) => only the elements of list for which fn holds
 - [x] list.reverse() => list in reverse order ( diverges for infinite list )
 - [x] list.concat() => list flattened; list must be a list of lists ( behaves differently than .concat() in JavaScript ! )
-- [ ] list.concatMap(fn) => list transformed by fn, then flattened
+- [x] list.concatMap(fn) => list transformed by fn, then flattened
 - [x] list.zipWith(fn,xs) => map, but with two lists ( fn will normally be a binary function )
-- [ ] list.foldr(fn,x) => right-associative reduction of list to a single value ( [x1,x2,..,xn].foldr(fn,z) = fn( x1, fn( x2, .. fn( xn, z ) ) ) ) ( foldr should only recursively evaluate necessary fn arguments, as to return a valid value from a nullary or unary fn even if list is infinite ) ( not quite .reduceRight() in JavaScript )
-- [ ] list.foldl(fn,x) => left-associative reduction of list to a single value ( [x1,x2,..,xn].foldl(fn,z) = fn( .. fn( fn( z, x1 ), x2 ) .., xn ) ) ( diverges for infinite list ) ( .reduce() in JavaScript )
-- [ ] list.scanr(fn,x) => right-associative incremental reduction of list to a list ( [x1,x2,..,xn].scanr(fn,z) = [ fn( x1, .. ), .., fn( x(n-1), fn( xn, z ) ), fn( xn, z ), z ] ) ( scanr should only recursively evaluate necessary fn arguments, as to return a valid value from a nullary or unary fn even if list is infinite. earlier versions of the kata did not have this requirement, so this is tested for Bonus Points only )
-- [ ] list.scanl(fn,x) => left-associative incremental reduction of list to a list ( [x1,x2,..,xn].scanl(fn,z) = [ z, fn( z, x1 ), fn( fn( z, x1 ), x2 ), .., fn( .., xn ) ] )
+- [x] list.foldr(fn,x) => right-associative reduction of list to a single value ( [x1,x2,..,xn].foldr(fn,z) = fn( x1, fn( x2, .. fn( xn, z ) ) ) ) ( foldr should only recursively evaluate necessary fn arguments, as to return a valid value from a nullary or unary fn even if list is infinite ) ( not quite .reduceRight() in JavaScript )
+- [x] list.foldl(fn,x) => left-associative reduction of list to a single value ( [x1,x2,..,xn].foldl(fn,z) = fn( .. fn( fn( z, x1 ), x2 ) .., xn ) ) ( diverges for infinite list ) ( .reduce() in JavaScript )
+- [x] list.scanr(fn,x) => right-associative incremental reduction of list to a list ( [x1,x2,..,xn].scanr(fn,z) = [ fn( x1, .. ), .., fn( x(n-1), fn( xn, z ) ), fn( xn, z ), z ] ) ( scanr should only recursively evaluate necessary fn arguments, as to return a valid value from a nullary or unary fn even if list is infinite. earlier versions of the kata did not have this requirement, so this is tested for Bonus Points only )
+- [x] list.scanl(fn,x) => left-associative incremental reduction of list to a list ( [x1,x2,..,xn].scanl(fn,z) = [ z, fn( z, x1 ), fn( fn( z, x1 ), x2 ), .., fn( .., xn ) ] )
 - [x] list.elem(x) => true if list contains x, false otherwise ( possibly diverges for infinite list ) ( .includes() in JavaScript )
 - [x] list.elemIndex(x) => index of x in list, or -1 if list does not contain x ( possibly diverges for infinite list ) ( .indexOf() in JavaScript )
 - [x] list.find(fn) => the first element of list for which fn holds ( possibly diverges for infinite list )

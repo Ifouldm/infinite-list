@@ -34,7 +34,7 @@ class List {
      * @return {List} An infinite list of all Integers
      */
     static get ALL() {
-        return new List(List.all);
+        return new List(List.allFunction);
     }
 
     /**
@@ -139,7 +139,7 @@ class List {
         }
     }
 
-    static* all() {
+    static* allFunction() {
         let val = 0;
         while (true) {
             yield val;
@@ -226,10 +226,13 @@ class List {
      */
     get(index) {
         if (this.isInfinite) {
+            const generator = this.infFunction();
             for (let i = 0; i < index; i += 1) {
-                this.infGenerator.next();
+                generator.next();
             }
-            return this.infGenerator.return().value;
+            const val = generator.next().value;
+            generator.return();
+            return val;
         }
         return this.list[index];
     }
@@ -251,10 +254,15 @@ class List {
      * @return {List} A new List containing the first n elements of the list
      */
     take(n) {
+        if (this.isInfinite && n < 0) {
+            return undefined;
+        }
+        const noElements = Math.min(Math.abs(n), this.length());
         // TODO: Negative numbers
         const newList = [];
-        for (let i = 0; i < n; i += 1) {
-            const value = this.isInfinite ? this.infGenerator.next().value : this.get(i);
+        for (let i = 0; i < noElements; i += 1) {
+            const index = n < 0 ? this.length() - noElements + i : i;
+            const value = this.isInfinite ? this.infGenerator.next().value : this.get(index);
             newList.push(value);
         }
         return new List(newList);
@@ -267,8 +275,11 @@ class List {
      * @return {List} A new List containing all elements after the nth element
      */
     drop(quantity) {
-        if (quantity > this.list.length) {
+        if (Math.abs(quantity) > this.list.length) {
             return new List();
+        }
+        if (quantity < 0) {
+            return new List(this.list.slice(0, this.length() + quantity));
         }
         return new List(this.list.slice(quantity));
     }
@@ -314,7 +325,7 @@ class List {
         ( equals list if list is infinite )
      */
     init() {
-        if (this.list.isInfinite) {
+        if (this.isInfinite) {
             return this;
         }
         return new List(this.list.slice(0, this.list.length - 1));
@@ -326,7 +337,7 @@ class List {
      */
     last() {
         if (this.list.isInfinite) {
-            return 'err';
+            return undefined;
         }
         if (this.nil()) {
             return undefined;
@@ -486,6 +497,100 @@ class List {
             }
         }
         return new List(flattenedList);
+    }
+
+    /**
+     * Generates a new that is flattened and mapped using the provided function
+     * @param {Function} fn Function to be applied to all elements of flattened list
+     */
+    concatMap(fn) {
+        return this.concat().map(fn);
+    }
+
+    /**
+     * right-associative reduction of list to a single value
+     * ( [x1,x2,..,xn].foldr(fn,z) = fn( x1, fn( x2, .. fn( xn, z ) ) ) )
+     * ( foldr should only recursively evaluate necessary fn arguments,
+     * as to return a valid value from a nullary or unary fn even if list is infinite )
+     * ( not quite .reduceRight() in JavaScript )
+     * @param {Function} fn Reduction function
+     * @param {*} x An accumulative value
+     * @return {*} A value after reduction
+     */
+    foldr(fn, x) {
+        if (this.isInfinite) {
+            return 'err';
+        }
+        let accumulator = x;
+        for (let i = 0; i < this.length() + 1; i += 1) {
+            const index = this.length() - i;
+            accumulator = fn(this.get(index), accumulator);
+        }
+        return accumulator;
+    }
+
+    /**
+     * left-associative reduction of list to a single value
+     * ( [x1,x2,..,xn].foldl(fn,z) = fn( .. fn( fn( z, x1 ), x2 ) .., xn ) )
+     * ( diverges for infinite list )
+     * ( .reduce() in JavaScript )
+     * @param {Function} fn Reduction function
+     * @param {*} x An accumulative value
+     * @return {*} A value after reduction
+     */
+    foldl(fn, x) {
+        if (this.isInfinite) {
+            return 'err';
+        }
+        let accumulator = x;
+        for (let i = 0; i < this.length(); i += 1) {
+            accumulator = fn(this.get(i), accumulator);
+        }
+        return accumulator;
+    }
+
+    /**
+     * right-associative incremental reduction of list to a list
+     * ( [x1,x2,..,xn].scanr(fn,z) = [ fn( x1, .. ), .., fn( x(n-1), fn( xn, z ) ),
+     * fn( xn, z ), z ] ) ( scanr should only recursively evaluate necessary fn arguments,
+     * as to return a valid value from a nullary or unary fn even if list is infinite.
+     * earlier versions of the kata did not have this requirement,
+     * so this is tested for Bonus Points only )
+     * @param {Function} fn Reduction function
+     * @param {*} x A value after reduction
+     */
+    scanr(fn, x) {
+        if (this.isInfinite) {
+            return 'err';
+        }
+        let accumulator = x;
+        const listSteps = [x];
+        for (let i = 0; i < this.length(); i += 1) {
+            const index = this.length() - i - 1;
+            accumulator = fn(this.get(index), accumulator);
+            listSteps.unshift(accumulator);
+        }
+        return new List(listSteps);
+    }
+
+    /**
+     * left-associative incremental reduction of list to a list
+     * ( [x1,x2,..,xn].scanl(fn,z) = [ z, fn( z, x1 ), fn( fn( z, x1 ), x2 ),
+     * .., fn( .., xn ) ] )
+     * @param {Function} fn Reduction function
+     * @param {*} x A value after reduction
+     */
+    scanl(fn, x) {
+        if (this.isInfinite) {
+            return 'err';
+        }
+        let accumulator = x;
+        const listSteps = [accumulator];
+        for (let i = 0; i < this.length(); i += 1) {
+            accumulator = fn(this.get(i), accumulator);
+            listSteps.push(accumulator);
+        }
+        return new List(listSteps);
     }
 
     /**
