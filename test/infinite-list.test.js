@@ -4,6 +4,8 @@
 const { assert } = require('chai');
 const List = require('../List');
 
+const odd = (x) => x % 2 !== 0;
+const even = (x) => x % 2 === 0;
 const plus = (v, w) => v + w;
 const times = (v, w) => v * w;
 const inc = (x) => x + 1;
@@ -69,6 +71,7 @@ describe('List', () => {
         assert.deepEqual(List.fromList([1, 2, 3])
             .filter((x) => Boolean(x & 1)).toList(), [1, 3]);
         assert.deepEqual(List.fromList([1, 2, 3]).filter((x) => !(x & 1)).toList(), [2]);
+        assert.deepEqual(List.ALL.filter(odd).take(8).toList(), [1, 3, 5, 7, 9, 11, 13, 15]);
     });
     it('Method test: reverse', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).reverse().toList(), [3, 2, 1]);
@@ -165,8 +168,8 @@ describe('List generators', () => {
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
     it('Generator test: Prime', () => {
-        // assert.deepEqual(List.PRIME.take(8).toList(),
-        //     [2, 3, 5, 7, 11, 13, 17, 19]);
+        assert.deepEqual(List.PRIME.take(8).toList(),
+            [2, 3, 5, 7, 11, 13, 17, 19]);
     });
     it('Generator test: Fibonacci', () => {
         assert.deepEqual(List.FIB.take(13).toList(),
@@ -178,9 +181,7 @@ describe('List generators', () => {
     });
 });
 describe('Temporary tests', () => {
-    it('Temporary tests', () => {
-        assert.deepEqual(List.ALL.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        // assert.deepEqual(List.ALL.filter((a) => a > 5)
-        // .algorithms[1].toString(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    it('isPrime tests', () => {
+        assert.equal(List.isPrime(4), false);
     });
 });

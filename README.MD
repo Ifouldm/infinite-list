@@ -49,14 +49,14 @@ All test inputs are valid and should result in a defined result.
 - [x] List.cycle(xs) => an infinite list of repetitions of xs ( equals xs if xs is infinite )
 - [x] List.replicate(n,x) => a finite list of length n, every element of which is x
 - [x] List.fromList(xs) => xs converted to a list ( an Array must be a valid xs )
-- [ ] List.PRIME, List.FIB, List.PI => ( must not require () )
+- [x] List.PRIME, List.FIB, List.PI => ( must not require () )
 
 ---
 ## Instance methods
 - [x] list.head() => the first element of list, or undefined for empty list
 - [x] list.tail() => list without its first element, or an empty list for empty list
-- [x] list.init() => list without its last element, or an empty list for empty list ( equals list if list is infinite )
-- [x] list.last() => the last element of list, or undefined for empty list ( diverges for infinite list )
+- [ ] list.init() => list without its last element, or an empty list for empty list ( equals list if list is infinite )
+- [ ] list.last() => the last element of list, or undefined for empty list ( diverges for infinite list )
 - [x] list.length() => the length of list ( diverges for infinite list )
 - [x] list.toList() => list converted to an Array ( diverges for infinite list )
 - [x] list.get(i) => the element of list at index i
