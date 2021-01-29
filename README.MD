@@ -55,8 +55,8 @@ All test inputs are valid and should result in a defined result.
 ## Instance methods
 - [x] list.head() => the first element of list, or undefined for empty list
 - [x] list.tail() => list without its first element, or an empty list for empty list
-- [ ] list.init() => list without its last element, or an empty list for empty list ( equals list if list is infinite )
-- [ ] list.last() => the last element of list, or undefined for empty list ( diverges for infinite list )
+- [x] list.init() => list without its last element, or an empty list for empty list ( equals list if list is infinite )
+- [x] list.last() => the last element of list, or undefined for empty list ( diverges for infinite list )
 - [x] list.length() => the length of list ( diverges for infinite list )
 - [x] list.toList() => list converted to an Array ( diverges for infinite list )
 - [x] list.get(i) => the element of list at index i

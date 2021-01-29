@@ -17,12 +17,15 @@ describe('List', () => {
         assert.deepEqual(List.empty.toList(), []);
         assert.deepEqual(List.empty.length(), 0);
         assert.deepEqual(new List([1, 2, 3]).toList(), [1, 2, 3]);
+        assert.deepEqual(List.ALL.toList(), undefined);
     });
     it('Method test: fromList', () => {
         assert.deepEqual(List.fromList([]).toList(), []);
         assert.deepEqual(List.fromList([1, 2, 3]).toList(), [1, 2, 3]);
         assert.deepEqual(List.fromList([1]).length(), 1);
         assert.deepEqual(List.fromList([1, 2]).length(), 2);
+        assert.deepEqual(List.fromList(List.ALL).length(), Infinity);
+        assert.deepEqual(List.fromList(List.ALL).take(5).toList(), [0, 1, 2, 3, 4]);
     });
     it('Method test: head', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).head(), 1);
@@ -31,6 +34,16 @@ describe('List', () => {
     it('Method test: tail', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).tail().toList(), [2, 3]);
         assert.deepEqual(List.fromList([]).tail().toList(), []);
+    });
+    it('Method test: init', () => {
+        assert.deepEqual(List.fromList([]).init().toList(), []);
+        assert.deepEqual(List.fromList([1, 2, 3]).init().toList(), [1, 2]);
+        assert.deepEqual(List.fromList([5, 6, 7]).init().toList(), [5, 6]);
+    });
+    it('Method test: last', () => {
+        assert.deepEqual(List.fromList([]).last(), undefined);
+        assert.deepEqual(List.fromList([1, 2, 3]).last(), 3);
+        assert.deepEqual(List.fromList([5, 6, 7]).last(), 7);
     });
     it('Method test: get', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).get(0), 1);

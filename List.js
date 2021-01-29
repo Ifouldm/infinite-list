@@ -6,7 +6,7 @@ class List {
     * Create a List
     * @param {*} list - An existing list
         or a function to generate an infinite list
-    * @param {object} generator - A generator for an infinite list
+    * @param {object} [generator] - A generator for an infinite list
     */
     constructor(...args) {
         this.list = [];
@@ -63,10 +63,15 @@ class List {
 
     /**
      * Generate a @List from an existing @List or @Array
-     * @param {Array} list Incoming List
+     * @param {*} list Incoming List
      * @return {List} New List containing list
      */
-    static fromList(list) { return new List(list); }
+    static fromList(list) {
+        if (list.isInfinite) {
+            return new List(list.infFunction, list.infGenerator);
+        }
+        return new List(list);
+    }
 
     /**
      * Generate an infinite list of successive applications of fn to x
@@ -189,7 +194,6 @@ class List {
         const generator = this.infFunction();
         // eslint-disable-next-line no-restricted-syntax
         for (const val of generator) {
-            console.log(val);
             if (filterFunction(val)) {
                 yield val;
             }
@@ -235,6 +239,9 @@ class List {
      * @return {Array} an Array
      */
     toList() {
+        if (this.isInfinite) {
+            return undefined;
+        }
         return Array.from(this.list);
     }
 
@@ -266,6 +273,10 @@ class List {
         return new List(this.list.slice(quantity));
     }
 
+    /**
+     * the length of list
+     * @return {Number} The length of the list
+     */
     length() {
         if (this.isInfinite) {
             return Infinity;
@@ -273,10 +284,19 @@ class List {
         return this.list.length;
     }
 
+    /**
+     * True if the list is empty
+     * @return {Boolean} True if the list if empty
+     */
     nil() {
         return this.length() === 0;
     }
 
+    /**
+     * element prepended to list
+     * @param {*} element The element to prepend
+     * @return The list including the prepended value
+     */
     cons(element) {
         if (!element) {
             return this;
@@ -289,6 +309,36 @@ class List {
         return this;
     }
 
+    /**
+     * list without its last element, or an empty list for empty list
+        ( equals list if list is infinite )
+     */
+    init() {
+        if (this.list.isInfinite) {
+            return this;
+        }
+        return new List(this.list.slice(0, this.list.length - 1));
+    }
+
+    /**
+     * the last element of list, or undefined for empty list
+     * @return The last element of the list
+     */
+    last() {
+        if (this.list.isInfinite) {
+            return 'err';
+        }
+        if (this.nil()) {
+            return undefined;
+        }
+        return this.list[this.list.length - 1];
+    }
+
+    /**
+     * Append newList elements list
+     * @param {List} newList The list of elements to append
+     * @return {List} The list including the appended elements
+     */
     append(newList) {
         if (Array.isArray(newList)) {
             this.list.push(...newList);
@@ -301,6 +351,12 @@ class List {
         return this;
     }
 
+    /**
+     * list from index i (inclusive) to index j (exclusive) ( both arguments
+        are optional; result is undefined for arguments not in list )
+     * @param {Number} start Index at which to start slice
+     * @param {Number} end Index at which to end slice (exclusive)
+     */
     slice(start, end) {
         if (end) {
             this.list = this.list.slice(start, end);
@@ -310,17 +366,32 @@ class List {
         return this;
     }
 
+    /**
+     * Reverses the list in place
+     * @return {List} The List after reversal
+     */
     reverse() {
         this.list.reverse();
         return this;
     }
 
+    /**
+     * List transformed by function
+     * @param {Function} mapfunction The function to be applied to each element
+     * @return A new list containing the mapped values
+     */
     map(mapfunction) {
         const newList = [];
         this.list.forEach((element) => newList.push(mapfunction(element)));
         return new List(newList);
     }
 
+    /**
+     * List only the elements for which fn holds true
+     * @param {Function} filterFunction The function to be applied to each element (
+            returns true for elements to be included)
+     * @return {List} A new List of values after filter
+     */
     filter(filterFunction) {
         if (this.isInfinite) {
             return new List(this.filterGen, this.filterGen(filterFunction));
@@ -334,6 +405,12 @@ class List {
         return new List(newList);
     }
 
+    /**
+     * True if fn holds for any element of list, false otherwise (
+        possibly diverges for infinite list ) ( .some() in JavaScript )
+     * @param {Function} anyFunction A function to be applied to each element
+     * @return {Boolean} True if any element evaluates True
+     */
     any(anyFunction) {
         for (let i = 0; i < this.length(); i += 1) {
             const element = this.list[i];
@@ -344,6 +421,12 @@ class List {
         return false;
     }
 
+    /**
+     * True if fn holds for all element of list, false otherwise (
+        possibly diverges for infinite list ) ( .every() in JavaScript )
+     * @param {Function} allFunction A function to be applied to each element
+     * @return {Boolean} True if all elements evalute True
+     */
     all(allFunction) {
         for (let i = 0; i < this.length(); i += 1) {
             const element = this.list[i];
@@ -354,6 +437,11 @@ class List {
         return true;
     }
 
+    /**
+     * Find the first element in the list for which the function evaluates True
+     * @param {Function} findFunction A function to be applied to each element
+     * @return {*} The first element which evaluates True
+     */
     find(findFunction) {
         for (let i = 0; i < this.length(); i += 1) {
             const element = this.list[i];
@@ -364,6 +452,11 @@ class List {
         return undefined;
     }
 
+    /**
+     * Find the index of the first element in the list for which the function evaluates True
+     * @param {Function} findFunction A function to be applied to each element
+     * @return {Number} The index of the first element which evaluates True
+     */
     findIndex(findFunction) {
         for (let i = 0; i < this.length(); i += 1) {
             const element = this.list[i];
@@ -374,6 +467,11 @@ class List {
         return undefined;
     }
 
+    /**
+     * list flattened; list must be a list of lists (
+        behaves differently than .concat() in JavaScript ! )
+     * @return {List} A flattened List
+     */
     concat() {
         const flattenedList = [];
         if (!this.nil()) {
@@ -390,6 +488,11 @@ class List {
         return new List(flattenedList);
     }
 
+    /**
+     * true if list contains element, false otherwise ( .includes() in JavaScript )
+     * @param {*} element Element to check inclusivity
+     * @return {Boolean} True if list contains element
+     */
     elem(element) {
         for (let i = 0; i < this.length(); i += 1) {
             if (element === this.list[i]) {
@@ -399,6 +502,11 @@ class List {
         return false;
     }
 
+    /**
+     * index of element in list, or -1 if list does not contain element ( .indexOf() in JavaScript )
+     * @param {*} element Element to find index of
+     * @return {Number} Index of element or -1 if not found
+     */
     elemIndex(element) {
         for (let i = 0; i < this.length(); i += 1) {
             if (element === this.list[i]) {
@@ -408,6 +516,10 @@ class List {
         return -1;
     }
 
+    /**
+     * Any element of list if all elements of list are equal, undefined otherwise
+     * @return {*} An element of the List or undefined
+     */
     the() {
         if (!this.nil()) {
             const firstElement = this.list[0];
@@ -421,6 +533,12 @@ class List {
         return undefined;
     }
 
+    /**
+     * map, but with two lists ( fn will normally be a binary function )
+     * @param {*} fn A function to be applied to each element of both lists
+     * @param {*} xs A second list to zip with
+     * @return {List} A new list including mapped elements from both lists
+     */
     zipWith(fn, xs) {
         if (this.isInfinite || xs.isInfinite) {
             this.infFunction.push(fn);
