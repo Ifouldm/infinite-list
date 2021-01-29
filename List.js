@@ -7,7 +7,7 @@ class List {
         }
         if (typeof args[0] === 'function') {
             this.isInfinite = true;
-            this.algorithms = [args[0]];
+            [this.infFunction] = args;
         }
     }
 
@@ -16,11 +16,11 @@ class List {
     }
 
     static get ALL() {
-        return new List((a) => a);
+        return new List((index) => index);
     }
 
     static get PRIME() {
-        return List.ALL.filter(List.isPrime);
+        return List.ALL.filter((element) => List.isPrime(element));
     }
 
     static get FIB() {
@@ -28,9 +28,23 @@ class List {
     }
 
     static get PI() {
-        return new List(() => {
-            // stub
-        });
+        return new List(this.piFunction);
+    }
+
+    static piFunction(index) {
+        let q = 1n;
+        let r = 180n;
+        let t = 60n;
+        let digit;
+        for (let i = 2n; i < index + 3; i += 1n) {
+            const y = (q * (27n * i - 12n) + 5n * r) / (5n * t);
+            const u = 3n * (3n * i + 1n) * (3n * i + 2n);
+            r = 10n * u * (q * (5n * i - 2n) + r - y * t);
+            q = 10n * q * i * (2n * i - 1n);
+            t *= u;
+            digit = Number(y);
+        }
+        return digit;
     }
 
     static isPrime(val) {
@@ -60,13 +74,8 @@ class List {
     }
 
     get(index) {
-        let output = index;
         if (this.isInfinite) {
-            for (let f = 0; f < this.algorithms.length; f += 1) {
-                const algo = this.algorithms[f];
-                output = algo(output);
-            }
-            return output;
+            return this.infFunction(index);
         }
         return this.list[index];
     }
@@ -148,10 +157,7 @@ class List {
 
     filter(filterFunction) {
         if (this.isInfinite) {
-            const filteredList = new List(this.algorithms[0]);
-            filteredList.algorithms = this.algorithms.slice();
-            filteredList.algorithms.push(filterFunction);
-            return filteredList;
+            return new List(filterFunction);
         }
         const newList = [];
         this.list.forEach((element) => {
@@ -251,7 +257,7 @@ class List {
 
     zipWith(fn, xs) {
         if (this.isInfinite || xs.isInfinite) {
-            this.algorithms.push(fn);
+            this.infFunction.push(fn);
             return this;
         }
         const newList = [];

@@ -172,10 +172,15 @@ describe('List generators', () => {
         assert.deepEqual(List.FIB.take(13).toList(),
             [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
     });
+    it('Generator test: Pi', () => {
+        assert.deepEqual(List.PI.take(15).toList(),
+            [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9]);
+    });
 });
 describe('Temporary tests', () => {
     it('Temporary tests', () => {
         assert.deepEqual(List.ALL.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        assert.deepEqual(List.ALL.filter((a) => a > 5).algorithms[1].toString(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        // assert.deepEqual(List.ALL.filter((a) => a > 5)
+        // .algorithms[1].toString(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
 });
