@@ -60,7 +60,7 @@ describe('List', () => {
     it('Method test: take', () => {
         assert.deepEqual(List.fromList([1, 2, 3, 4]).take(3).toList(), [1, 2, 3]);
         assert.deepEqual(List.fromList([1, 2, 3, 4]).take(5).toList(), [1, 2, 3, 4]);
-        assert.deepEqual(List.fromList([1, 2, 3, 4]).take(-2).toList(), [3, 4]);
+        assert.deepEqual(List.fromList([1, 2, 3, 4]).take(-2).toList(), []);
         assert.deepEqual(List.empty.take(5).toList(), []);
     });
     it('Method test: drop', () => {
@@ -225,13 +225,11 @@ describe('Codewars tests', () => {
         const l = List.fromList([1, 2, 3, 4]);
         assert.deepEqual(l.take(0).toList(), []);
         assert.deepEqual(l.take(3).toList(), [1, 2, 3]);
-        assert.deepEqual(l.take(-1).toList(), [4]);
+        assert.deepEqual(l.take(-1).toList(), []);
         assert.deepEqual(l.take(1e10).toList(), [1, 2, 3, 4]);
         assert.deepEqual(l.drop(0).toList(), [1, 2, 3, 4]);
         assert.deepEqual(l.drop(3).toList(), [4]);
-        assert.deepEqual(l.drop(-1).toList(), [1, 2, 3]);
-
-    // expected [ 4 ] to deeply equal [ 1, 2, 3, 4 ]
+        assert.deepEqual(l.drop(-1).toList(), [1, 2, 3, 4]);
     });
     it('Concat tests', () => {
         const l = List.fromList([1, 2, 3]);
@@ -254,7 +252,7 @@ describe('Codewars tests', () => {
         assert.deepEqual(l.elem(0), false);
         assert.deepEqual(l.elemIndex(0), -1);
         assert.deepEqual(l.find(Boolean), undefined);
-        assert.deepEqual(l.findIndex(Boolean), undefined);
+        assert.deepEqual(l.findIndex(Boolean), -1);
 
         // expected undefined to deeply equal -1
     });
@@ -274,10 +272,59 @@ describe('Codewars tests', () => {
         l = List.iterate(inc, 0).take(5);
 
         l.the();
-        List.iterate(inc, 0).take(1001).length();
-        List.iterate(inc, 0).take(1001).reverse().length();
-        List.iterate(inc, 0).findIndex((x) => x > 1000);
+        assert.deepEqual(List.iterate(inc, 0).take(1001).length(), 1001);
+        assert.deepEqual(List.iterate(inc, 0).take(1001).reverse().length(), 1001);
+        assert.deepEqual(List.iterate(inc, 0).findIndex((x) => x > 1000), 1001);
+    });
 
-        // unknown
+    it('[1,2,1,3,4] tests', () => {
+        l = List.fromList([1, 2, 1, 3, 4]);
+
+        assert.deepEqual(l.scanl(plus, 0).toList(), [0, 1, 3, 4, 7, 11]);
+        assert.deepEqual(l.reverse().scanr(plus, 0).toList(), [11, 7, 4, 3, 1, 0]);
+        assert.deepEqual(l.last(), 4);
+        assert.deepEqual(l.foldr(plus, 0), 11);
+        assert.deepEqual(l.map(inc).toList(), [2, 3, 2, 4, 5]);
+    });
+
+    it('repeat tests', () => {
+        assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3).toList(), [1, 1, 1]);
+        assert.deepEqual(List.iterate(inc, 3).take(5).toList(), [4, 4, 4, 4, 4]);
+        assert.deepEqual(List.iterate(inc, 3).map(inc).take(3).toList(), [5, 5, 5]);
+        assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3)
+            .toList(), [3, 3, 3]);
+        assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);
+    });
+
+    it('zipWith tests', () => {
+        const l0 = List.iterate(inc, 0);
+        const l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const l2 = l0.take(10);
+        // assert.deepEqual(l0.zipWith(times, l1).toList(), [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]);
+        // assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);
+    });
+
+    it('random tests', () => {
+        assert.deepEqual(List.repeat(2)
+            .zipWith(times,
+                List.cycle([1, 2, 3]))
+            .map((x) => x - 1)
+            .take(3)
+            .reverse()
+            .toList(),
+        [5, 3, 1]);
+        assert.deepEqual(List.repeat(2)
+            .zipWith(times,
+                List.cycle([1, 2, 3]))
+            .map((x) => x - 1)
+            .take(6)
+            .reverse()
+            .toList(),
+        [5, 3, 1, 5, 3, 1]);
+        assert.deepEqual(List.repeat([1, 2, 3])
+            .concat()
+            .take(4)
+            .toList(),
+        [1, 2, 3, 1]);
     });
 });
