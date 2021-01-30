@@ -17,7 +17,6 @@ class List {
         if (typeof args[0] === 'function') {
             this.isInfinite = true;
             [this.infFunction] = args;
-            this.infGenerator = typeof args[1] === 'object' ? args[1] : this.infFunction();
         }
     }
 
@@ -34,7 +33,14 @@ class List {
      * @return {List} An infinite list of all Integers
      */
     static get ALL() {
-        return new List(List.allFunction);
+        function* allFunction() {
+            let val = 0;
+            while (true) {
+                yield val;
+                val += 1;
+            }
+        }
+        return new List(allFunction);
     }
 
     /**
@@ -42,7 +48,14 @@ class List {
      * @return {List} An infinite list of all prime numbers
      */
     static get PRIME() {
-        return new List(List.primeFunction);
+        function* primeFunction() {
+            for (let i = 0; ; i += 1) {
+                if (List.isPrime(i)) {
+                    yield i;
+                }
+            }
+        }
+        return new List(primeFunction);
     }
 
     /**
@@ -50,7 +63,19 @@ class List {
      * @return {List} An infinite list of all Fibonacci numbers
      */
     static get FIB() {
-        return new List(List.fibFunction);
+        function* fibFunction() {
+            yield 0;
+            yield 1;
+            let prev = 0;
+            let current = 1;
+            while (true) {
+                const next = current + prev;
+                prev = current;
+                current = next;
+                yield current;
+            }
+        }
+        return new List(fibFunction);
     }
 
     /**
@@ -58,7 +83,20 @@ class List {
      * @return {List} An infinite list of the digits of PI
      */
     static get PI() {
-        return new List(List.piFunction);
+        function* piFunction() {
+            let q = 1n;
+            let r = 180n;
+            let t = 60n;
+            for (let i = 2n; ; i += 1n) {
+                const y = (q * (27n * i - 12n) + 5n * r) / (5n * t);
+                const u = 3n * (3n * i + 1n) * (3n * i + 2n);
+                r = 10n * u * (q * (5n * i - 2n) + r - y * t);
+                q = 10n * q * i * (2n * i - 1n);
+                t *= u;
+                yield Number(y);
+            }
+        }
+        return new List(piFunction);
     }
 
     /**
@@ -68,7 +106,7 @@ class List {
      */
     static fromList(list) {
         if (list.isInfinite) {
-            return new List(list.infFunction, list.infGenerator);
+            return new List(list.infFunction);
         }
         return new List(list);
     }
@@ -80,7 +118,15 @@ class List {
      * @return {List} An infinite list of all Integers
      */
     static iterate(fn, x) {
-        return new List(List.iterateFunction, List.iterateFunction(fn, x));
+        function* iterateFunction() {
+            let acc = x;
+            for (let i = 0; ; i += 1) {
+                yield acc;
+                acc = fn(acc);
+            }
+        }
+
+        return new List(iterateFunction);
     }
 
     /**
@@ -89,7 +135,12 @@ class List {
      * @return {List} An infinite list every element of which is val
      */
     static repeat(val) {
-        return new List(List.repeatFunction, List.repeatFunction(val));
+        function* repeatFunction() {
+            while (true) {
+                yield val;
+            }
+        }
+        return new List(repeatFunction);
     }
 
     /**
@@ -111,60 +162,15 @@ class List {
         if (list.isInfinite) {
             return list;
         }
-        return new List(List.cycleFunction, List.cycleFunction(list));
-    }
-
-    static* primeFunction() {
-        for (let i = 0; ; i += 1) {
-            if (List.isPrime(i)) {
-                yield i;
+        function* cycleFunction() {
+            let i = 0;
+            while (true) {
+                const listIndex = i % list.length();
+                yield list.get(listIndex);
+                i += 1;
             }
         }
-    }
-
-    static* cycleFunction(list) {
-        let i = 0;
-        while (true) {
-            const listIndex = i % list.length();
-            yield list.get(listIndex);
-            i += 1;
-        }
-    }
-
-    static* iterateFunction(fn, x) {
-        let acc = x;
-        for (let i = 0; ; i += 1) {
-            yield acc;
-            acc = fn(acc);
-        }
-    }
-
-    static* allFunction() {
-        let val = 0;
-        while (true) {
-            yield val;
-            val += 1;
-        }
-    }
-
-    static* repeatFunction(val) {
-        while (true) {
-            yield val;
-        }
-    }
-
-    static* piFunction() {
-        let q = 1n;
-        let r = 180n;
-        let t = 60n;
-        for (let i = 2n; ; i += 1n) {
-            const y = (q * (27n * i - 12n) + 5n * r) / (5n * t);
-            const u = 3n * (3n * i + 1n) * (3n * i + 2n);
-            r = 10n * u * (q * (5n * i - 2n) + r - y * t);
-            q = 10n * q * i * (2n * i - 1n);
-            t *= u;
-            yield Number(y);
-        }
+        return new List(cycleFunction);
     }
 
     /**
@@ -175,29 +181,6 @@ class List {
     static isPrime(num) {
         for (let i = 2, s = Math.sqrt(num); i <= s; i += 1) if (num % i === 0) return false;
         return num > 1;
-    }
-
-    static* fibFunction() {
-        yield 0;
-        yield 1;
-        let prev = 0;
-        let current = 1;
-        while (true) {
-            const next = current + prev;
-            prev = current;
-            current = next;
-            yield current;
-        }
-    }
-
-    * filterGen(filterFunction) {
-        const generator = this.infFunction();
-        // eslint-disable-next-line no-restricted-syntax
-        for (const val of generator) {
-            if (filterFunction(val)) {
-                yield val;
-            }
-        }
     }
 
     /**
@@ -254,18 +237,21 @@ class List {
      * @return {List} A new List containing the first n elements of the list
      */
     take(n) {
-        if (this.isInfinite && n < 0) {
-            return undefined;
+        if (this.isInfinite) {
+            if (n < 0) {
+                return undefined;
+            }
+            const generator = this.infFunction();
+            const genList = [];
+            for (let i = 0; i < n; i += 1) {
+                genList.push(generator.next().value);
+            }
+            return new List(genList);
         }
         const noElements = Math.min(Math.abs(n), this.length());
-        // TODO: Negative numbers
-        const newList = [];
-        for (let i = 0; i < noElements; i += 1) {
-            const index = n < 0 ? this.length() - noElements + i : i;
-            const value = this.isInfinite ? this.infGenerator.next().value : this.get(index);
-            newList.push(value);
-        }
-        return new List(newList);
+        const start = n < 0 ? this.length() + n : 0;
+        const end = start + noElements;
+        return new List(this.list.slice(start, end));
     }
 
     /**
@@ -404,8 +390,17 @@ class List {
      * @return {List} A new List of values after filter
      */
     filter(filterFunction) {
+        function* filterGen() {
+            const generator = this.infFunction();
+            // eslint-disable-next-line no-restricted-syntax
+            for (const val of generator) {
+                if (filterFunction(val)) {
+                    yield val;
+                }
+            }
+        }
         if (this.isInfinite) {
-            return new List(this.filterGen, this.filterGen(filterFunction));
+            return new List(filterGen);
         }
         const newList = [];
         this.list.forEach((element) => {
@@ -474,6 +469,7 @@ class List {
             if (findFunction(element)) {
                 return i;
             }
+            if (i > 1000000) break;
         }
         return undefined;
     }
@@ -484,15 +480,33 @@ class List {
      * @return {List} A flattened List
      */
     concat() {
+        if (this.isInfinite) {
+            return this;
+        }
         const flattenedList = [];
-        if (!this.nil()) {
-            if (this.list[0] instanceof List) {
-                for (let i = 0; i < this.length(); i += 1) {
-                    flattenedList.push(...this.list[i].list);
-                }
-            } else if (Array.isArray(this.list[0])) {
-                for (let i = 0; i < this.length(); i += 1) {
-                    flattenedList.push(...this.list[i]);
+        for (let i = 0; i < this.length(); i += 1) {
+            // If this is a list of lists
+            if (this.list[i] instanceof List) {
+                const internalList = this.list[i];
+                // While the list is not infinite add its values to running list
+                if (!internalList.isInfinite) {
+                    flattenedList.push(...internalList.list);
+                } else {
+                    // create a generator of running list followed by infinite list
+                    const generator = function* genFunc() {
+                        for (let j = 0; j < flattenedList.length; j += 1) {
+                            const element = flattenedList[j];
+                            yield element;
+                        }
+                        const newGen = internalList.infFunction();
+                        let done = false;
+                        while (!done) {
+                            const next = newGen.next();
+                            done = next.done;
+                            yield next.value;
+                        }
+                    };
+                    return new List(generator);
                 }
             }
         }
@@ -645,9 +659,25 @@ class List {
      * @return {List} A new list including mapped elements from both lists
      */
     zipWith(fn, xs) {
-        if (this.isInfinite || xs.isInfinite) {
-            this.infFunction.push(fn);
-            return this;
+        function* generatorFunc() {
+            const thisGenerator = this.infFunction();
+            let xsGenerator;
+            if (xs.isInfinite) {
+                xsGenerator = xs.infFunction();
+            }
+            let i = 0;
+            while (true) {
+                yield fn(thisGenerator.next().value);
+                if (xs.isInfinite) {
+                    yield fn(xsGenerator.next().value);
+                } else if (i < xs.length()) {
+                    yield fn(xs.get(i));
+                }
+                i += 1;
+            }
+        }
+        if (this.isInfinite) {
+            return new List(generatorFunc);
         }
         const newList = [];
         for (let i = 0; i < this.length(); i += 1) {
