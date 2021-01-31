@@ -95,18 +95,6 @@ class List {
                 yield Number(y);
             }
         }
-        // let q = 1.0;
-        // let r = 180.0;
-        // let t = 60.0;
-        // for (let i = 2; ; i += 1) {
-        //     const y = (q * (27 * i - 12) + 5.0 * r) / (5.0 * t);
-        //     const u = 3.0 * (3.0 * i + 1.0) * (3.0 * i + 2.0);
-        //     r = 10.0 * u * (q * (5.0 * i - 2.0) + r - y * t);
-        //     q = 10.0 * q * i * (2.0 * i - 1);
-        //     t *= u;
-        //     yield Number(y);
-        // }
-        // }
         return new List(piFunction);
     }
 
@@ -174,11 +162,14 @@ class List {
             return list;
         }
         function* cycleFunction() {
-            let i = 0;
-            while (true) {
-                const listIndex = i % list.length();
-                yield list.get(listIndex);
-                i += 1;
+            for (let i = 0; ; i += 1) {
+                if (Array.isArray(list)) {
+                    const index = i % list.length;
+                    yield list[index];
+                } else {
+                    const index = i % list.length();
+                    yield list.get(index);
+                }
             }
         }
         return new List(cycleFunction);
@@ -207,14 +198,18 @@ class List {
      * @return list without its first element, or an empty list for empty list
      */
     tail() {
-        function* tailFunc() {
-            const generator = this.infFunction();
-            // eslint-disable-next-line no-restricted-syntax
-            for (const val of generator) {
-                yield val;
-            }
-        }
         if (this.isInfinite) {
+            const generator = this.infFunction();
+            const tailFunc = function* tailFunction() {
+                let skip = true;
+                for (const val of generator) {
+                    if (!skip) {
+                        yield val;
+                    }
+                    skip = false;
+                }
+            };
+
             return new List(tailFunc);
         }
         if (this.list.length === 0) {
@@ -268,7 +263,8 @@ class List {
             const generator = this.infFunction();
             const genList = [];
             for (let i = 0; i < n; i += 1) {
-                genList.push(generator.next().value);
+                const next = generator.next();
+                genList.push(next.value);
             }
             return new List(genList);
         }
@@ -384,13 +380,31 @@ class List {
      * @param {Number} start Index at which to start slice
      * @param {Number} end Index at which to end slice (exclusive)
      */
-    slice(start, end) {
-        if (end) {
-            this.list = this.list.slice(start, end);
-        } else {
-            this.list = this.list.slice(start);
+    slice(start = 0, end = this.length()) {
+        if (this.isInfinite) {
+            const generator = this.infFunction();
+            if (end !== Infinity) {
+                const sliceList = [];
+                console.log(start, end);
+                for (let i = 0; i < start + end - 1; i += 1) {
+                    const next = generator.next();
+                    if (i >= start) {
+                        sliceList.push(next.value);
+                    }
+                }
+                return new List(sliceList);
+            }
+            const sliceGen = function* sliceFunction() {
+                for (let i = 0; ; i += 1) {
+                    const next = generator.next();
+                    if (i > start && i < end) {
+                        yield next.value;
+                    }
+                }
+            };
+            return new List(sliceGen);
         }
-        return this;
+        return new List(this.list.slice(start, end));
     }
 
     /**
@@ -411,8 +425,8 @@ class List {
             const generator = this.infFunction();
             const genFunc = function* generatorFunction() {
                 while (true) {
-                    console.log(generator.next().value);
-                    yield mapfunction(generator.next().value);
+                    const value = generator.next();
+                    yield mapfunction(value.value);
                 }
             };
             return new List(genFunc);
@@ -429,17 +443,17 @@ class List {
      * @return {List} A new List of values after filter
      */
     filter(filterFunction) {
-        function* filterGen() {
-            const generator = this.infFunction();
-            // eslint-disable-next-line no-restricted-syntax
-            for (const val of generator) {
-                if (filterFunction(val)) {
-                    yield val;
-                }
-            }
-        }
         if (this.isInfinite) {
-            return new List(filterGen);
+            const generator = this.infFunction();
+            const filterFunc = function* filterGen() {
+            // eslint-disable-next-line no-restricted-syntax
+                for (const val of generator) {
+                    if (filterFunction(val)) {
+                        yield val;
+                    }
+                }
+            };
+            return new List(filterFunc);
         }
         const newList = [];
         this.list.forEach((element) => {
@@ -503,8 +517,17 @@ class List {
      * @return {Number} The index of the first element which evaluates True
      */
     findIndex(findFunction) {
+        let generator;
+        if (this.isInfinite) {
+            generator = this.infFunction();
+        }
         for (let i = 0; i < this.length(); i += 1) {
-            const element = this.get(i);
+            let element;
+            if (this.isInfinite) {
+                element = generator.next().value;
+            } else {
+                element = this.get(i);
+            }
             if (findFunction(element)) {
                 return i;
             }
@@ -533,6 +556,10 @@ class List {
                             for (const element of innerList) {
                                 yield element;
                             }
+                        }
+                    } else if (Array.isArray(innerList)) {
+                        for (const element of innerList) {
+                            yield element;
                         }
                     }
                 }
@@ -610,11 +637,11 @@ class List {
      */
     foldl(fn, x) {
         if (this.isInfinite) {
-            return 'err';
+            return undefined;
         }
         let accumulator = x;
         for (let i = 0; i < this.length(); i += 1) {
-            accumulator = fn(this.get(i), accumulator);
+            accumulator = fn(accumulator, this.get(i));
         }
         return accumulator;
     }
@@ -657,7 +684,7 @@ class List {
         let accumulator = x;
         const listSteps = [accumulator];
         for (let i = 0; i < this.length(); i += 1) {
-            accumulator = fn(this.get(i), accumulator);
+            accumulator = fn(accumulator, this.get(i));
             listSteps.push(accumulator);
         }
         return new List(listSteps);
@@ -720,7 +747,9 @@ class List {
             const xsGenerator = xs.infFunction();
             const genFunc = function* generatorFunc() {
                 for (let i = 0; ; i += 1) {
-                    yield fn(thisGenerator.next().value, xsGenerator.next().value);
+                    const thisVal = thisGenerator.next();
+                    const otherVal = xsGenerator.next();
+                    yield fn(thisVal.value, otherVal.value);
                 }
             };
             return new List(genFunc);
