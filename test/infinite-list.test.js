@@ -289,8 +289,8 @@ describe('Codewars tests', () => {
 
     it('repeat tests', () => {
         assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3).toList(), [1, 1, 1]);
-        assert.deepEqual(List.iterate(inc, 3).take(5).toList(), [4, 4, 4, 4, 4]);
-        assert.deepEqual(List.iterate(inc, 3).map(inc).take(3).toList(), [5, 5, 5]);
+        assert.deepEqual(List.iterate(inc, 3).take(5).toList(), [3, 4, 5, 6, 7]);
+        assert.deepEqual(List.iterate(inc, 3).map(inc).take(3).toList(), [5, 7, 9]);
         assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3)
             .toList(), [3, 3, 3]);
         assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);
