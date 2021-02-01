@@ -17,45 +17,44 @@ describe('List', () => {
         assert.deepEqual(List.empty.toList(), []);
         assert.deepEqual(List.empty.length(), 0);
         assert.deepEqual(new List([1, 2, 3]).toList(), [1, 2, 3]);
-        assert.deepEqual(List.ALL.toList(), undefined);
+        assert.deepEqual(List.PI.toList(), undefined);
     });
     it('Method test: fromList', () => {
         assert.deepEqual(List.fromList([]).toList(), []);
         assert.deepEqual(List.fromList([1, 2, 3]).toList(), [1, 2, 3]);
         assert.deepEqual(List.fromList([1]).length(), 1);
         assert.deepEqual(List.fromList([1, 2]).length(), 2);
-        assert.deepEqual(List.fromList(List.ALL).length(), Infinity);
-        assert.deepEqual(List.fromList(List.ALL).take(5).toList(), [0, 1, 2, 3, 4]);
+        assert.deepEqual(List.fromList(List.PI).length(), Infinity);
+        assert.deepEqual(List.fromList(List.PI).take(5).toList(), [3, 1, 4, 1, 5]);
     });
     it('Method test: head', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).head(), 1);
         assert.deepEqual(List.fromList([]).head(), undefined);
-        assert.deepEqual(List.ALL.head(), 0);
         assert.deepEqual(List.PI.head(), 3);
     });
     it('Method test: tail', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).tail().toList(), [2, 3]);
         assert.deepEqual(List.fromList([]).tail().toList(), []);
-        assert.deepEqual(List.ALL.tail().take(5).toList(), [1, 2, 3, 4, 5]);
+        assert.deepEqual(List.PI.tail().take(5).toList(), [1, 4, 1, 5, 9]);
     });
     it('Method test: init', () => {
         assert.deepEqual(List.fromList([]).init().toList(), []);
         assert.deepEqual(List.fromList([1, 2, 3]).init().toList(), [1, 2]);
         assert.deepEqual(List.fromList([5, 6, 7]).init().toList(), [5, 6]);
-        assert.deepEqual(List.ALL.init().take(5).toList(), [0, 1, 2, 3, 4]);
+        assert.deepEqual(List.PI.init().take(5).toList(), [3, 1, 4, 1, 5]);
     });
     it('Method test: last', () => {
         assert.deepEqual(List.fromList([]).last(), undefined);
         assert.deepEqual(List.fromList([1, 2, 3]).last(), 3);
         assert.deepEqual(List.fromList([5, 6, 7]).last(), 7);
-        assert.deepEqual(List.ALL.last(), undefined);
+        assert.deepEqual(List.PI.last(), undefined);
     });
     it('Method test: get', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).get(0), 1);
         assert.deepEqual(List.fromList([1, 2, 3]).get(1), 2);
         assert.deepEqual(List.fromList([1, 2, 3]).get(2), 3);
         assert.deepEqual(List.fromList([1, 2, 3]).get(6), undefined);
-        assert.deepEqual(List.ALL.get(3), 3);
+        assert.deepEqual(List.PI.get(3), 1);
     });
     it('Method test: take', () => {
         assert.deepEqual(List.fromList([1, 2, 3, 4]).take(3).toList(), [1, 2, 3]);
@@ -72,7 +71,7 @@ describe('List', () => {
         assert.deepEqual(List.empty.nil(), true);
         assert.deepEqual(List.fromList([1]).nil(), false);
         assert.deepEqual(List.fromList([1, 2]).nil(), false);
-        assert.deepEqual(List.ALL.nil(), false);
+        assert.deepEqual(List.PI.nil(), false);
     });
     it('Method test: cons', () => {
         assert.deepEqual(List.fromList([2, 3]).cons(1).toList(), [1, 2, 3]);
@@ -84,14 +83,14 @@ describe('List', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).append(List.empty).toList(), [1, 2, 3]);
         assert.deepEqual(List.fromList([1, 2, 3]).append(List.fromList([1, 2, 3])).toList(),
             [1, 2, 3, 1, 2, 3]);
-        assert.deepEqual(List.ALL.append(List.fromList([5, 6, 7])).take(3).toList(), [0, 1, 2]);
+        assert.deepEqual(List.PI.append(List.fromList([5, 6, 7])).take(3).toList(), [3, 1, 4]);
     });
     it('Method test: slice', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).slice(1).toList(), [2, 3]);
         assert.deepEqual(List.fromList([1, 2, 3]).slice(1, 2).toList(), [2]);
         assert.deepEqual(List.fromList([1, 2, 3]).slice().toList(), [1, 2, 3]);
-        assert.deepEqual(List.ALL.slice(4).take(4).toList(), [5, 6, 7, 8]);
-        assert.deepEqual(List.ALL.slice(1, 4).toList(), [1, 2, 3]);
+        assert.deepEqual(List.PI.slice(4).take(4).toList(), [5, 9, 2, 6]);
+        assert.deepEqual(List.PI.slice(1, 4).toList(), [1, 4, 1]);
     });
     it('Method test: map', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).map((x) => x * x).toList(), [1, 4, 9]);
@@ -101,7 +100,8 @@ describe('List', () => {
         assert.deepEqual(List.fromList([1, 2, 3])
             .filter((x) => Boolean(x & 1)).toList(), [1, 3]);
         assert.deepEqual(List.fromList([1, 2, 3]).filter((x) => !(x & 1)).toList(), [2]);
-        assert.deepEqual(List.ALL.filter(odd).take(8).toList(), [1, 3, 5, 7, 9, 11, 13, 15]);
+        assert.deepEqual(List.iterate((x) => x + 1, 0)
+            .filter(odd).take(8).toList(), [1, 3, 5, 7, 9, 11, 13, 15]);
     });
     it('Method test: reverse', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).reverse().toList(), [3, 2, 1]);
@@ -115,6 +115,10 @@ describe('List', () => {
     it('Method test: concatMap', () => {
         assert.deepEqual(List.fromList([List.fromList([1, 2, 3]),
             List.fromList([1, 2, 3])]).concatMap(inc).toList(), [2, 3, 4, 2, 3, 4]);
+        assert.deepEqual(List.fromList([1, 2, 3])
+            .concatMap((n) => List.replicate(n, n)).toList(), [1, 2, 2, 3, 3, 3]);
+        assert.deepEqual(List.fromList([0, 1, 2, 3])
+            .concatMap(List.repeat).take(5).toList(), [0, 0, 0, 0, 0]);
     });
     it('Method test: zipWith', () => {
         assert.deepEqual(List.fromList([1, 2, 3]).zipWith(times,
@@ -177,21 +181,25 @@ describe('List generators', () => {
         assert.deepEqual(List.empty.append([1]).toList(), [1]);
         assert.deepEqual(new List().toList(), []);
     });
+
     it('Method test: repeat', () => {
         assert.deepEqual(List.repeat(1).take(10).toList(), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
         assert.deepEqual(List.repeat(2).take(10).toList(), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
         assert.deepEqual(List.repeat(3).take(10).toList(), [3, 3, 3, 3, 3, 3, 3, 3, 3, 3]);
     });
+
     it('Method test: iterate', () => {
         assert.deepEqual(List.iterate(inc, 0).take(10).toList(),
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
+
     it('Method test: cycle', () => {
         assert.deepEqual(List.cycle(List.fromList([1, 2, 3])).take(10).toList(),
             [1, 2, 3, 1, 2, 3, 1, 2, 3, 1]);
         assert.deepEqual(List.cycle([1, 2, 3]).take(12).toList(),
             [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]);
     });
+
     it('Method test: replicate', () => {
         assert.deepEqual(List.replicate(10, 1).toList(), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
         assert.deepEqual(List.replicate(10, 2).toList(), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
@@ -200,27 +208,20 @@ describe('List generators', () => {
         assert.deepEqual(List.replicate(10, 1).toList(),
             List.iterate(id, 1).take(10).toList());
     });
-    it('Generator test: All', () => {
-        assert.deepEqual(List.ALL.take(10).toList(),
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    });
+
     it('Generator test: Prime', () => {
         assert.deepEqual(List.PRIME.take(8).toList(),
             [2, 3, 5, 7, 11, 13, 17, 19]);
     });
+
     it('Generator test: Fibonacci', () => {
         assert.deepEqual(List.FIB.take(13).toList(),
             [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
     });
+
     it('Generator test: Pi', () => {
         assert.deepEqual(List.PI.take(15).toList(),
             [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9]);
-    });
-});
-
-describe('Temporary tests', () => {
-    it('isPrime tests', () => {
-        assert.equal(List.isPrime(4), false);
     });
 });
 
@@ -235,24 +236,28 @@ describe('Codewars tests', () => {
         assert.deepEqual(l.drop(3).toList(), [4]);
         assert.deepEqual(l.drop(-1).toList(), [1, 2, 3, 4]);
     });
+
     it('Concat tests', () => {
         const l = List.fromList([1, 2, 3]);
         const m = List.fromList([l, l]);
         const n = List.fromList([List.fromList([1, 1]), List.repeat(2)]);
 
-        assert.deepEqual(l.concat().toList(), []);
+        assert.deepEqual(l.concat().toList(), [1, 2, 3]);
         assert.deepEqual(m.concat().toList(), [1, 2, 3, 1, 2, 3]);
         assert.deepEqual(n.concat().take(3).toList(), [1, 1, 2]);
         assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);
     });
 
     it('More Concat tests', () => {
-        assert.deepEqual([[1, 2, 3]].concat(), []);
-        assert.deepEqual([[1, 2, 3], [1, 2, 3]].concat(), []);
-        // assert.deepEqual([[1,1],List.repeat(2)]].concat().take(3), []);
-        assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3), []);
-        assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3), []);
-        assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4), []);
+        assert.deepEqual(List.fromList([List.fromList([1, 2, 3])]).concat().toList(), [1, 2, 3]);
+        assert.deepEqual(List.fromList([[1, 2, 3], [1, 2, 3]])
+            .concat().toList(), [1, 2, 3, 1, 2, 3]);
+        assert.deepEqual(List.fromList([List.fromList([1, 1]), List.repeat(2)])
+            .concat().take(3).toList(), [1, 1, 2]);
+        assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3).toList(), [1, 1, 1]);
+        assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3)
+            .toList(), [3, 3, 3]);
+        assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);
     });
 
     it('Empty list tests', () => {
@@ -315,29 +320,34 @@ describe('Codewars tests', () => {
     });
 
     it('the tests', () => {
-        assert.deepEqual([].the(), []);
-        assert.deepEqual([0].the(), []);
-        assert.deepEqual([1].the(), []);
-        assert.deepEqual([0, 0, 0].the(), []);
-        assert.deepEqual([1, 1, 1].the(), []);
-        assert.deepEqual([0, 1, 2].the(), []);
-        assert.deepEqual(List.replicate(10, 1).append(List.repeat(2)).the(), []);
+        assert.deepEqual(List.fromList([]).the(), undefined);
+        assert.deepEqual(List.fromList([0]).the(), 0);
+        assert.deepEqual(List.fromList([1]).the(), 1);
+        assert.deepEqual(List.fromList([0, 0, 0]).the(), 0);
+        assert.deepEqual(List.fromList([1, 1, 1]).the(), 1);
+        assert.deepEqual(List.fromList([0, 1, 2]).the(), undefined);
+        assert.deepEqual(List.replicate(10, 1).append(List.repeat(2)).the(), undefined);
     });
 
     it('[0,1,...]', () => {
         const l = List.iterate(inc, 0);
 
-        assert.deepEqual(l.head(), []);
-        assert.deepEqual(l.tail().head(), []);
-        assert.deepEqual(l.tail().take(3), []);
-        assert.deepEqual(l.take(10), []);
-        assert.deepEqual(l.take(10), []);
-        assert.deepEqual(l.nil(), []);
-        assert.deepEqual(l.foldr(constant), []);
+        assert.deepEqual(l.head(), 0);
+        assert.deepEqual(l.tail().head(), 1);
+        assert.deepEqual(l.tail().take(3).toList(), [1, 2, 3]);
+        assert.deepEqual(l.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert.deepEqual(l.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        assert.deepEqual(l.nil(), false);
+        assert.deepEqual(l.foldr(constant), 0);
+        assert.deepEqual(l.foldr(constant, undefined), undefined);
+        assert.deepEqual(l.foldr(constant(17)), 17);
+        assert.deepEqual(l.scanl(plus, 0).take(10).toList(), [0, 0, 1, 3, 6, 10, 15, 21, 28, 36]);
+        assert.deepEqual(l.drop(10).take(10).toList(), [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+        assert.deepEqual(l.any((x) => x === 3), true);
     });
 
     it('PI test', () => {
-        assert.deepEqual(List.PI.get(12), 0);
+        assert.deepEqual(List.PI.get(12), 9);
     });
 
     it('random tests', () => {
@@ -368,8 +378,8 @@ describe('Codewars tests', () => {
 
         assert.deepEqual(l.head(), 1);
         assert.deepEqual(l.tail().take(6).toList(), [2, 3, 1, 2, 3, 1]);
-        assert.deepEqual(l.filter(Boolean).take(6).toList(),
-            [1, 2, 3, 1, 2, 3]);
+        assert.deepEqual(l.filter(odd).take(6).toList(),
+            [1, 3, 1, 3, 1, 3]);
         assert.deepEqual(l.map((x) => x * x).take(5).toList(), [1, 4, 9, 1, 4]);
         assert.deepEqual(l.map((x) => x * x).tail().findIndex((x) => x === 1), 2);
     });

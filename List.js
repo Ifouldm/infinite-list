@@ -28,28 +28,17 @@ class List {
     }
 
     /**
-     * Generate an infinite list of all integer numbers starting at 0 and increasing
-     * @return {List} An infinite list of all Integers
-     */
-    static get ALL() {
-        function* allFunction() {
-            let val = 0;
-            while (true) {
-                yield val;
-                val += 1;
-            }
-        }
-        return new List(allFunction);
-    }
-
-    /**
      * Generate an infinite list of all prime numbers starting at 0 and increasing
      * @return {List} An infinite list of all prime numbers
      */
     static get PRIME() {
         function* primeFunction() {
+            function isPrime(num) {
+                for (let i = 2, s = Math.sqrt(num); i <= s; i += 1) if (num % i === 0) return false;
+                return num > 1;
+            }
             for (let i = 0; ; i += 1) {
-                if (List.isPrime(i)) {
+                if (isPrime(i)) {
                     yield i;
                 }
             }
@@ -69,9 +58,9 @@ class List {
             let current = 1;
             while (true) {
                 const next = current + prev;
+                yield next;
                 prev = current;
                 current = next;
-                yield current;
             }
         }
         return new List(fibFunction);
@@ -119,7 +108,7 @@ class List {
     static iterate(fn, x) {
         function* iterateFunction() {
             let curr = x;
-            for (let i = 0; ; i += 1) {
+            while (true) {
                 yield curr;
                 curr = fn(curr);
             }
@@ -163,26 +152,12 @@ class List {
         }
         function* cycleFunction() {
             for (let i = 0; ; i += 1) {
-                if (Array.isArray(list)) {
-                    const index = i % list.length;
-                    yield list[index];
-                } else {
-                    const index = i % list.length();
-                    yield list.get(index);
-                }
+                const cycleList = Array.isArray(list) ? list : list.list;
+                const index = i % cycleList.length;
+                yield cycleList[index];
             }
         }
         return new List(cycleFunction);
-    }
-
-    /**
-     * Check a number to verify primality
-     * @param {Number} num A number to check for primality
-     * @return {Boolean} If num is prime
-     */
-    static isPrime(num) {
-        for (let i = 2, s = Math.sqrt(num); i <= s; i += 1) if (num % i === 0) return false;
-        return num > 1;
     }
 
     /**
@@ -198,24 +173,7 @@ class List {
      * @return list without its first element, or an empty list for empty list
      */
     tail() {
-        if (this.isInfinite) {
-            const generator = this.infFunction();
-            const tailFunc = function* tailFunction() {
-                let skip = true;
-                for (const val of generator) {
-                    if (!skip) {
-                        yield val;
-                    }
-                    skip = false;
-                }
-            };
-
-            return new List(tailFunc);
-        }
-        if (this.list.length === 0) {
-            return new List();
-        }
-        return new List(this.list.slice(1));
+        return this.slice(1);
     }
 
     /**
@@ -229,9 +187,7 @@ class List {
             for (let i = 0; i < index; i += 1) {
                 generator.next();
             }
-            const val = generator.next().value;
-            generator.return();
-            return val;
+            return generator.next().value;
         }
         return this.list[index];
     }
@@ -257,21 +213,17 @@ class List {
             return List.empty;
         }
         if (n > this.length()) {
-            return this;
+            return new List(this.list);
         }
         if (this.isInfinite) {
             const generator = this.infFunction();
             const genList = [];
             for (let i = 0; i < n; i += 1) {
-                const next = generator.next();
-                genList.push(next.value);
+                genList.push(generator.next().value);
             }
             return new List(genList);
         }
-        const noElements = Math.min(Math.abs(n), this.length());
-        const start = n < 0 ? this.length() + n : 0;
-        const end = start + noElements;
-        return new List(this.list.slice(start, end));
+        return new List(this.list.slice(0, n));
     }
 
     /**
@@ -281,17 +233,23 @@ class List {
      * @return {List} A new List containing all elements after the nth element
      */
     drop(quantity) {
+        if (this.isInfinite) {
+            const generator = this.infFunction();
+            const genFunc = function* generatorFunction() {
+                for (let i = 0; ; i += 1) {
+                    const next = generator.next();
+                    if (i >= quantity) {
+                        yield next.value;
+                    }
+                }
+            };
+            return new List(genFunc);
+        }
         if (quantity > this.length()) {
             return List.empty;
         }
         if (quantity < 0) {
-            return this;
-        }
-        if (Math.abs(quantity) > this.list.length) {
-            return new List();
-        }
-        if (quantity < 0) {
-            return new List(this.list.slice(0, this.length() + quantity));
+            return new List(this.list);
         }
         return new List(this.list.slice(quantity));
     }
@@ -301,10 +259,7 @@ class List {
      * @return {Number} The length of the list
      */
     length() {
-        if (this.isInfinite) {
-            return Infinity;
-        }
-        return this.list.length;
+        return this.isInfinite ? Infinity : this.list.length;
     }
 
     /**
@@ -321,15 +276,13 @@ class List {
      * @return The list including the prepended value
      */
     cons(element) {
-        if (!element) {
-            return this;
+        if (this.isInfinite) {
+            if (!element) {
+                return new List(this.infFunction);
+            }
         }
-        if (this.nil()) {
-            this.list.push(element);
-        } else {
-            this.list.unshift(element);
-        }
-        return this;
+        this.list.unshift(element);
+        return new List(this.list);
     }
 
     /**
@@ -338,7 +291,7 @@ class List {
      */
     init() {
         if (this.isInfinite) {
-            return this;
+            return new List(this.infFunction);
         }
         return new List(this.list.slice(0, this.list.length - 1));
     }
@@ -348,10 +301,7 @@ class List {
      * @return The last element of the list
      */
     last() {
-        if (this.list.isInfinite) {
-            return undefined;
-        }
-        if (this.nil()) {
+        if (this.isInfinite || this.nil()) {
             return undefined;
         }
         return this.list[this.list.length - 1];
@@ -363,6 +313,25 @@ class List {
      * @return {List} The list including the appended elements
      */
     append(newList) {
+        if (this.isInfinite) {
+            return this;
+        }
+        if (newList instanceof List) {
+            if (!newList.isInfinite) {
+                this.list.push(...newList.list);
+                return this;
+            }
+            const generator = newList.infFunction();
+            const genFunc = function* generatorFunc() {
+                for (const val of this.list) {
+                    console.log(val);
+                    yield val;
+                }
+                const next = generator.next();
+                yield next.value;
+            };
+            return new List(genFunc);
+        }
         if (Array.isArray(newList)) {
             this.list.push(...newList);
         } else if (newList.nil()) {
@@ -385,7 +354,6 @@ class List {
             const generator = this.infFunction();
             if (end !== Infinity) {
                 const sliceList = [];
-                console.log(start, end);
                 for (let i = 0; i < start + end - 1; i += 1) {
                     const next = generator.next();
                     if (i >= start) {
@@ -397,7 +365,7 @@ class List {
             const sliceGen = function* sliceFunction() {
                 for (let i = 0; ; i += 1) {
                     const next = generator.next();
-                    if (i > start && i < end) {
+                    if (i >= start && i < end) {
                         yield next.value;
                     }
                 }
@@ -471,8 +439,8 @@ class List {
      * @return {Boolean} True if any element evaluates True
      */
     any(anyFunction) {
-        for (let i = 0; i < this.length(); i += 1) {
-            const element = this.list[i];
+        for (let i = 0; i < 10000; i += 1) {
+            const element = this.get(i);
             if (anyFunction(element)) {
                 return true;
             }
@@ -545,7 +513,9 @@ class List {
         if (this.isInfinite) {
             const generator = this.infFunction();
             const concatFunc = function* concatFunction() {
-                for (const innerList of generator) {
+                while (true) {
+                    const next = generator.next();
+                    const innerList = next.value;
                     if (innerList instanceof List) {
                         if (innerList.isInfinite) {
                             const gen = innerList.infFunction();
@@ -553,7 +523,8 @@ class List {
                                 yield element;
                             }
                         } else {
-                            for (const element of innerList) {
+                            for (let i = 0; i < innerList.length(); i += 1) {
+                                const element = innerList.list[i];
                                 yield element;
                             }
                         }
@@ -573,7 +544,9 @@ class List {
                 const internalList = this.list[i];
                 // While the list is not infinite add its values to running list
                 if (!internalList.isInfinite) {
-                    flattenedList.push(...internalList.list);
+                    for (const val of internalList.list) {
+                        flattenedList.push(val);
+                    }
                 } else {
                     // create a generator of running list followed by infinite list
                     const concatGenerator = function* genFunc() {
@@ -591,17 +564,21 @@ class List {
                     };
                     return new List(concatGenerator);
                 }
+            } else if (Array.isArray(this.list[i])) {
+                for (const value of this.list[i]) flattenedList.push(value);
+            } else {
+                flattenedList.push(this.list[i]);
             }
         }
         return new List(flattenedList);
     }
 
     /**
-     * Generates a new that is flattened and mapped using the provided function
+     * Generates a new List that is flattened and mapped using the provided function
      * @param {Function} fn Function to be applied to all elements of flattened list
      */
     concatMap(fn) {
-        return this.concat().map(fn);
+        return this.concat().map(fn).concat();
     }
 
     /**
@@ -616,7 +593,12 @@ class List {
      */
     foldr(fn, x) {
         if (this.isInfinite) {
-            return undefined;
+            // check if function returns a constant value ???
+            if (fn.length < 2) {
+                if (arguments.length === 1) return fn(x || 0);
+                return x;
+            }
+            return (typeof fn !== 'function') ? fn : fn(x);
         }
         let accumulator = x;
         for (let i = 0; i < this.length(); i += 1) {
@@ -679,7 +661,16 @@ class List {
      */
     scanl(fn, x) {
         if (this.isInfinite) {
-            return 'err';
+            let accumulator = x;
+            const generator = this.infFunction();
+            const genFunc = function* generatorFunction() {
+                while (true) {
+                    yield accumulator;
+                    const next = generator.next();
+                    accumulator = fn(accumulator, next.value);
+                }
+            };
+            return new List(genFunc);
         }
         let accumulator = x;
         const listSteps = [accumulator];
@@ -723,6 +714,9 @@ class List {
      * @return {*} An element of the List or undefined
      */
     the() {
+        if (this.isInfinite) {
+            return undefined;
+        }
         if (!this.nil()) {
             const firstElement = this.list[0];
             for (let i = 1; i < this.length(); i += 1) {
