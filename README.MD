@@ -1,8 +1,8 @@
 # List. Any way you like.
 
 
-## [JSDoc Documentation](/out/List.html)
-## [Test Documentation](/out/test.report.html)
+## [JSDoc Documentation](out/List.html)
+## [Test Documentation](out/test.report.html)
 
 Based on CodeWars 2kyu Kata: [Link to challenge](https://www.codewars.com/kata/59f7a040a5b820c684000046)
 
