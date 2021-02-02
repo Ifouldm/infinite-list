@@ -1,0 +1,680 @@
+
+<html>
+    <head>
+        <title>Mocha</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+        @charset "utf-8";
+
+body {
+  margin:0;
+}
+
+#mocha {
+  font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 60px 50px;
+}
+
+#mocha ul,
+#mocha li {
+  margin: 0;
+  padding: 0;
+}
+
+#mocha ul {
+  list-style: none;
+}
+
+#mocha h1,
+#mocha h2 {
+  margin: 0;
+}
+
+#mocha h1 {
+  margin-top: 15px;
+  font-size: 1em;
+  font-weight: 200;
+}
+
+#mocha h1 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#mocha h1 a:hover {
+  text-decoration: underline;
+}
+
+#mocha .suite .suite h1 {
+  margin-top: 0;
+  font-size: .8em;
+}
+
+#mocha .hidden {
+  display: none;
+}
+
+#mocha h2 {
+  font-size: 12px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+#mocha .suite {
+  margin-left: 15px;
+}
+
+#mocha .test {
+  margin-left: 15px;
+  overflow: hidden;
+}
+
+#mocha .test.pending:hover h2::after {
+  content: '(pending)';
+  font-family: arial, sans-serif;
+}
+
+#mocha .test.pass.medium .duration {
+  background: #c09853;
+}
+
+#mocha .test.pass.slow .duration {
+  background: #b94a48;
+}
+
+#mocha .test.pass::before {
+  content: '✓';
+  font-size: 12px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  color: #00d6b2;
+}
+
+#mocha .test.pass .duration {
+  font-size: 9px;
+  margin-left: 5px;
+  padding: 2px 5px;
+  color: #fff;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#mocha .test.pass.fast .duration {
+  display: none;
+}
+
+#mocha .test.pending {
+  color: #0b97c4;
+}
+
+#mocha .test.pending::before {
+  content: '◦';
+  color: #0b97c4;
+}
+
+#mocha .test.fail {
+  color: #c00;
+}
+
+#mocha .test.fail pre {
+  color: black;
+}
+
+#mocha .test.fail::before {
+  content: '✖';
+  font-size: 12px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  color: #c00;
+}
+
+#mocha .test pre.error {
+  color: #c00;
+  max-height: 300px;
+  overflow: auto;
+}
+
+#mocha .test .html-error {
+  overflow: auto;
+  color: black;
+  display: block;
+  float: left;
+  clear: left;
+  font: 12px/1.5 monaco, monospace;
+  margin: 5px;
+  padding: 15px;
+  border: 1px solid #eee;
+  max-width: 85%; /*(1)*/
+  max-width: -webkit-calc(100% - 42px);
+  max-width: -moz-calc(100% - 42px);
+  max-width: calc(100% - 42px); /*(2)*/
+  max-height: 300px;
+  word-wrap: break-word;
+  border-bottom-color: #ddd;
+  -webkit-box-shadow: 0 1px 3px #eee;
+  -moz-box-shadow: 0 1px 3px #eee;
+  box-shadow: 0 1px 3px #eee;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#mocha .test .html-error pre.error {
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: 0;
+  -moz-box-shadow: 0;
+  box-shadow: 0;
+  padding: 0;
+  margin: 0;
+  margin-top: 18px;
+  max-height: none;
+}
+
+/**
+ * (1): approximate for browsers not supporting calc
+ * (2): 42 = 2*15 + 2*10 + 2*1 (padding + margin + border)
+ *      ^^ seriously
+ */
+#mocha .test pre {
+  display: block;
+  float: left;
+  clear: left;
+  font: 12px/1.5 monaco, monospace;
+  margin: 5px;
+  padding: 15px;
+  border: 1px solid #eee;
+  max-width: 85%; /*(1)*/
+  max-width: -webkit-calc(100% - 42px);
+  max-width: -moz-calc(100% - 42px);
+  max-width: calc(100% - 42px); /*(2)*/
+  word-wrap: break-word;
+  border-bottom-color: #ddd;
+  -webkit-box-shadow: 0 1px 3px #eee;
+  -moz-box-shadow: 0 1px 3px #eee;
+  box-shadow: 0 1px 3px #eee;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#mocha .test h2 {
+  position: relative;
+}
+
+#mocha .test a.replay {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  text-decoration: none;
+  vertical-align: middle;
+  display: block;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  text-align: center;
+  background: #eee;
+  font-size: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  -webkit-transition:opacity 200ms;
+  -moz-transition:opacity 200ms;
+  -o-transition:opacity 200ms;
+  transition: opacity 200ms;
+  opacity: 0.3;
+  color: #888;
+}
+
+#mocha .test:hover a.replay {
+  opacity: 1;
+}
+
+#mocha-report.pass .test.fail {
+  display: none;
+}
+
+#mocha-report.fail .test.pass {
+  display: none;
+}
+
+#mocha-report.pending .test.pass,
+#mocha-report.pending .test.fail {
+  display: none;
+}
+#mocha-report.pending .test.pass.pending {
+  display: block;
+}
+
+#mocha-error {
+  color: #c00;
+  font-size: 1.5em;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+#mocha-stats {
+  position: fixed;
+  top: 15px;
+  right: 10px;
+  font-size: 12px;
+  margin: 0;
+  color: #888;
+  z-index: 1;
+}
+
+#mocha-stats .progress {
+  float: right;
+  padding-top: 0;
+
+  /**
+   * Set safe initial values, so mochas .progress does not inherit these
+   * properties from Bootstrap .progress (which causes .progress height to
+   * equal line height set in Bootstrap).
+   */
+  height: auto;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-color: initial;
+}
+
+#mocha-stats em {
+  color: black;
+}
+
+#mocha-stats a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#mocha-stats a:hover {
+  border-bottom: 1px solid #eee;
+}
+
+#mocha-stats li {
+  display: inline-block;
+  margin: 0 5px;
+  list-style: none;
+  padding-top: 11px;
+}
+
+#mocha-stats canvas {
+  width: 40px;
+  height: 40px;
+}
+
+#mocha code .comment { color: #ddd; }
+#mocha code .init { color: #2f6fad; }
+#mocha code .string { color: #5890ad; }
+#mocha code .keyword { color: #8a6343; }
+#mocha code .number { color: #2f6fad; }
+
+@media screen and (max-device-width: 480px) {
+  #mocha {
+    margin: 60px 0px;
+  }
+
+  #mocha #stats {
+    position: absolute;
+  }
+}
+#mocha .test.pass pre {
+    display: none;
+}
+
+#mocha .test.fail pre {
+    display: none;
+}
+
+#mocha .test pre.error {
+    display: block;
+}
+
+#mocha .test .html-error pre.error {
+    box-shadow: none;
+}
+
+#mocha .test:hover h2:after {
+    color: #888888;
+    content: "(view source)";
+    font-family: arial;
+    font-size: 12px;
+    position: relative;
+    right: -10px;
+    top: 0;
+}
+
+#mocha .test.pass.pending h2 {
+    cursor: auto;
+}
+
+#mocha .mocha-header {
+    right: 30px;
+    position: fixed;
+    top: 15px;
+    font-size: 14px;
+    margin: 0;
+    color: #888;
+    z-index: 1;
+}
+
+#mocha .mocha-header em {
+    font-style: normal;
+    color: black;
+}
+
+#mocha .mocha-header ul {
+    display: inline-block;
+}
+
+#mocha .mocha-stats li {
+    display: inline-block;
+    margin: 0 5px;
+    list-style: none;
+    padding-top: 11px;
+}
+
+#mocha .mocha-menu {
+    margin-right: 10px;
+}
+
+#mocha .mocha-menu li {
+    display: inline-block;
+    margin-left: 10px;
+    list-style: none;
+}
+
+#mocha .mocha-menu li span {
+    display: inline-block;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    padding: 3px 7px 2px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+    border-radius: 5px;
+    user-select: none;
+}
+
+#mocha .mocha-menu li span.checked {
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,.2);
+}
+
+#mocha .toggle-passes {
+    background: #b94a48;
+}
+
+        </style>
+    </head>
+    <body>
+        <div id="mocha">
+            <div class="mocha-header">
+                <ul class="mocha-menu">
+                    <li><span id="toggle-passes" class="toggle-passes">show failures only</span></li>
+                </ul>
+                <ul class="mocha-stats">
+                    <li class="passes">passes: <em>51</em></li>
+                    <li class="pending">pending: <em>0</em></li>
+                    <li class="failures">failures: <em>0</em></li>
+                    <li class="duration">duration: <em>13ms</em></li>
+                </ul>
+            </div>
+            <ul id="report"><li class="suite"><h1>List</h1><ul><li class="test pass fast"><h2>Method test: toList<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.empty.toList(), []);
+assert.deepEqual(List.empty.length(), 0);
+assert.deepEqual(new List([1, 2, 3]).toList(), [1, 2, 3]);
+assert.deepEqual(List.PI.toList(), undefined);</code></pre></li><li class="test pass fast"><h2>Method test: fromList<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.fromList([]).toList(), []);
+assert.deepEqual(List.fromList([1, 2, 3]).toList(), [1, 2, 3]);
+assert.deepEqual(List.fromList([1]).length(), 1);
+assert.deepEqual(List.fromList([1, 2]).length(), 2);
+assert.deepEqual(List.fromList(List.PI).length(), Infinity);
+assert.deepEqual(List.fromList(List.PI).take(5).toList(), [3, 1, 4, 1, 5]);</code></pre></li><li class="test pass fast"><h2>Method test: head<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).head(), 1);
+assert.deepEqual(List.fromList([]).head(), undefined);
+assert.deepEqual(List.PI.head(), 3);</code></pre></li><li class="test pass fast"><h2>Method test: tail<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).tail().toList(), [2, 3]);
+assert.deepEqual(List.fromList([]).tail().toList(), []);
+assert.deepEqual(List.PI.tail().take(5).toList(), [1, 4, 1, 5, 9]);</code></pre></li><li class="test pass fast"><h2>Method test: init<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([]).init().toList(), []);
+assert.deepEqual(List.fromList([1, 2, 3]).init().toList(), [1, 2]);
+assert.deepEqual(List.fromList([5, 6, 7]).init().toList(), [5, 6]);
+assert.deepEqual(List.PI.init().take(5).toList(), [3, 1, 4, 1, 5]);</code></pre></li><li class="test pass fast"><h2>Method test: last<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([]).last(), undefined);
+assert.deepEqual(List.fromList([1, 2, 3]).last(), 3);
+assert.deepEqual(List.fromList([5, 6, 7]).last(), 7);
+assert.deepEqual(List.PI.last(), undefined);</code></pre></li><li class="test pass fast"><h2>Method test: get<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).get(0), 1);
+assert.deepEqual(List.fromList([1, 2, 3]).get(1), 2);
+assert.deepEqual(List.fromList([1, 2, 3]).get(2), 3);
+assert.deepEqual(List.fromList([1, 2, 3]).get(6), undefined);
+assert.deepEqual(List.PI.get(3), 1);</code></pre></li><li class="test pass fast"><h2>Method test: take<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3, 4]).take(3).toList(), [1, 2, 3]);
+assert.deepEqual(List.fromList([1, 2, 3, 4]).take(5).toList(), [1, 2, 3, 4]);
+assert.deepEqual(List.fromList([1, 2, 3, 4]).take(-2).toList(), []);
+assert.deepEqual(List.empty.take(5).toList(), []);</code></pre></li><li class="test pass fast"><h2>Method test: drop<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(1).toList(), [2, 3, 4]);
+assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(2).toList(), [3, 4]);
+assert.deepEqual(List.fromList([1, 2, 3, 4]).drop(6).toList(), []);</code></pre></li><li class="test pass fast"><h2>Method test: nil<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.empty.nil(), true);
+assert.deepEqual(List.fromList([1]).nil(), false);
+assert.deepEqual(List.fromList([1, 2]).nil(), false);
+assert.deepEqual(List.PI.nil(), false);</code></pre></li><li class="test pass fast"><h2>Method test: cons<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([2, 3]).cons(1).toList(), [1, 2, 3]);
+assert.deepEqual(List.empty.cons(1).toList(), [1]);</code></pre></li><li class="test pass fast"><h2>Method test: append<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.empty.append(List.empty).toList(), []);
+assert.deepEqual(List.empty.append(List.fromList([1, 2, 3])).toList(), [1, 2, 3]);
+assert.deepEqual(List.fromList([1, 2, 3]).append(List.empty).toList(), [1, 2, 3]);
+assert.deepEqual(List.fromList([1, 2, 3]).append(List.fromList([1, 2, 3])).toList(),
+    [1, 2, 3, 1, 2, 3]);
+assert.deepEqual(List.PI.append(List.fromList([5, 6, 7])).take(3).toList(), [3, 1, 4]);</code></pre></li><li class="test pass fast"><h2>Method test: slice<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).slice(1).toList(), [2, 3]);
+assert.deepEqual(List.fromList([1, 2, 3]).slice(1, 2).toList(), [2]);
+assert.deepEqual(List.fromList([1, 2, 3]).slice().toList(), [1, 2, 3]);
+assert.deepEqual(List.PI.slice(4).take(4).toList(), [5, 9, 2, 6]);
+assert.deepEqual(List.PI.slice(1, 4).toList(), [1, 4, 1]);</code></pre></li><li class="test pass fast"><h2>Method test: map<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).map((x) =&#x3E; x * x).toList(), [1, 4, 9]);
+assert.deepEqual(List.fromList([11, 22, 4]).map(inc).toList(), [12, 23, 5]);</code></pre></li><li class="test pass fast"><h2>Method test: filter<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3])
+    .filter((x) =&#x3E; Boolean(x &#x26; 1)).toList(), [1, 3]);
+assert.deepEqual(List.fromList([1, 2, 3]).filter((x) =&#x3E; !(x &#x26; 1)).toList(), [2]);
+assert.deepEqual(List.iterate((x) =&#x3E; x + 1, 0)
+    .filter(odd).take(8).toList(), [1, 3, 5, 7, 9, 11, 13, 15]);</code></pre></li><li class="test pass fast"><h2>Method test: reverse<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).reverse().toList(), [3, 2, 1]);
+assert.deepEqual(List.fromList([]).reverse().toList(), []);</code></pre></li><li class="test pass fast"><h2>Method test: concat<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([List.fromList([1, 2, 3]),
+    List.fromList([1, 2, 3])]).concat().toList(), [1, 2, 3, 1, 2, 3]);
+assert.deepEqual(List.empty.concat().toList(), []);</code></pre></li><li class="test pass fast"><h2>Method test: concatMap<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.fromList([List.fromList([1, 2, 3]),
+    List.fromList([1, 2, 3])]).concatMap(inc).toList(), [2, 3, 4, 2, 3, 4]);
+assert.deepEqual(List.fromList([1, 2, 3])
+    .concatMap((n) =&#x3E; List.replicate(n, n)).toList(), [1, 2, 2, 3, 3, 3]);
+assert.deepEqual(List.fromList([0, 1, 2, 3])
+    .concatMap(List.repeat).take(5).toList(), [0, 0, 0, 0, 0]);</code></pre></li><li class="test pass fast"><h2>Method test: zipWith<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).zipWith(times,
+    List.fromList([3, 2, 1])).toList(), [3, 4, 3]);</code></pre></li><li class="test pass fast"><h2>Method test: foldr<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).foldr((x, z) =&#x3E; z.cons(x),
+    List.empty).toList(), [1, 2, 3]);
+assert.deepEqual(List.empty.foldr(() =&#x3E; _ | _, Math.E), Math.E);</code></pre></li><li class="test pass fast"><h2>Method test: foldl<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).foldl(plus, 0), 6);
+assert.deepEqual(List.fromList([1, 2, 3]).foldl(inc, 0),
+    List.fromList([1, 2, 3]).length());</code></pre></li><li class="test pass fast"><h2>Method test: scanr<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).scanr(plus, 0).toList(), [6, 5, 3, 0]);
+assert.deepEqual(List.empty.scanr(times, 1).toList(), [1]);</code></pre></li><li class="test pass fast"><h2>Method test: scanl<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).scanl(plus, 0).toList(), [0, 1, 3, 6]);
+assert.deepEqual(List.empty.scanl(times, 1).toList(), [1]);</code></pre></li><li class="test pass fast"><h2>Method test: elem<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).elem(0), false);
+assert.deepEqual(List.fromList([1, 2, 3]).elem(2), true);
+assert.deepEqual(List.empty.elem(0), false);</code></pre></li><li class="test pass fast"><h2>Method test: elemIndex<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).elemIndex(0), -1);
+assert.deepEqual(List.fromList([1, 2, 3]).elemIndex(2), 1);
+assert.deepEqual(List.empty.elemIndex(0), -1);</code></pre></li><li class="test pass fast"><h2>Method test: find / findIndex<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).find((x) =&#x3E; !(x &#x26; 1)), 2);
+assert.deepEqual(List.fromList([1, 3]).find((x) =&#x3E; !(x &#x26; 1)), undefined);
+assert.deepEqual(List.empty.find((x) =&#x3E; !(x &#x26; 1)), undefined);
+assert.deepEqual(List.fromList([1, 2, 3]).findIndex((x) =&#x3E; !(x &#x26; 1)), 1);
+assert.deepEqual(List.fromList([1, 3]).find((x) =&#x3E; !(x &#x26; 1)), undefined);
+assert.deepEqual(List.empty.find((x) =&#x3E; !(x &#x26; 1)), undefined);</code></pre></li><li class="test pass fast"><h2>Method test: any<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([true, false]).any(id), true);
+assert.deepEqual(List.empty.any(id), false);</code></pre></li><li class="test pass fast"><h2>Method test: all<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([true, false]).all(id), false);
+assert.deepEqual(List.empty.all(id), true);</code></pre></li><li class="test pass fast"><h2>Method test: the<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([1, 2, 3]).the(), undefined);
+assert.deepEqual(List.fromList([1, 1, 1]).the(), 1);
+assert.deepEqual(List.empty.the(), undefined);</code></pre></li></ul></li><li class="suite"><h1>List generators</h1><ul><li class="test pass fast"><h2>Method test: empty<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.empty.toList(), []);
+assert.deepEqual(List.empty.append([1]).toList(), [1]);
+assert.deepEqual(new List().toList(), []);</code></pre></li><li class="test pass fast"><h2>Method test: repeat<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.repeat(1).take(10).toList(), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+assert.deepEqual(List.repeat(2).take(10).toList(), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+assert.deepEqual(List.repeat(3).take(10).toList(), [3, 3, 3, 3, 3, 3, 3, 3, 3, 3]);</code></pre></li><li class="test pass fast"><h2>Method test: iterate<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.iterate(inc, 0).take(10).toList(),
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);</code></pre></li><li class="test pass fast"><h2>Method test: cycle<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.cycle(List.fromList([1, 2, 3])).take(10).toList(),
+    [1, 2, 3, 1, 2, 3, 1, 2, 3, 1]);
+assert.deepEqual(List.cycle([1, 2, 3]).take(12).toList(),
+    [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]);</code></pre></li><li class="test pass fast"><h2>Method test: replicate<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.replicate(10, 1).toList(), [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+assert.deepEqual(List.replicate(10, 2).toList(), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+assert.deepEqual(List.replicate(10, 3).toList(), [3, 3, 3, 3, 3, 3, 3, 3, 3, 3]);
+assert.deepEqual(List.replicate(0, undefined).toList(), List.empty.toList());
+assert.deepEqual(List.replicate(10, 1).toList(),
+    List.iterate(id, 1).take(10).toList());</code></pre></li><li class="test pass fast"><h2>Generator test: Prime<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.PRIME.take(8).toList(),
+    [2, 3, 5, 7, 11, 13, 17, 19]);</code></pre></li><li class="test pass fast"><h2>Generator test: Fibonacci<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.FIB.take(13).toList(),
+    [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);</code></pre></li><li class="test pass fast"><h2>Generator test: Pi<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.PI.take(15).toList(),
+    [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9]);</code></pre></li></ul></li><li class="suite"><h1>Codewars tests</h1><ul><li class="test pass fast"><h2>Take / drop tests<span class="duration">0ms</span></h2><pre><code>const l = List.fromList([1, 2, 3, 4]);
+assert.deepEqual(l.take(0).toList(), []);
+assert.deepEqual(l.take(3).toList(), [1, 2, 3]);
+assert.deepEqual(l.take(-1).toList(), []);
+assert.deepEqual(l.take(1e10).toList(), [1, 2, 3, 4]);
+assert.deepEqual(l.drop(0).toList(), [1, 2, 3, 4]);
+assert.deepEqual(l.drop(3).toList(), [4]);
+assert.deepEqual(l.drop(-1).toList(), [1, 2, 3, 4]);</code></pre></li><li class="test pass fast"><h2>Concat tests<span class="duration">0ms</span></h2><pre><code>const l = List.fromList([1, 2, 3]);
+const m = List.fromList([l, l]);
+const n = List.fromList([List.fromList([1, 1]), List.repeat(2)]);
+assert.deepEqual(l.concat().toList(), [1, 2, 3]);
+assert.deepEqual(m.concat().toList(), [1, 2, 3, 1, 2, 3]);
+assert.deepEqual(n.concat().take(3).toList(), [1, 1, 2]);
+assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);</code></pre></li><li class="test pass fast"><h2>More Concat tests<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([List.fromList([1, 2, 3])]).concat().toList(), [1, 2, 3]);
+assert.deepEqual(List.fromList([[1, 2, 3], [1, 2, 3]])
+    .concat().toList(), [1, 2, 3, 1, 2, 3]);
+assert.deepEqual(List.fromList([List.fromList([1, 1]), List.repeat(2)])
+    .concat().take(3).toList(), [1, 1, 2]);
+assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3).toList(), [1, 1, 1]);
+assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3)
+    .toList(), [3, 3, 3]);
+assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);</code></pre></li><li class="test pass fast"><h2>Empty list tests<span class="duration">0ms</span></h2><pre><code>l = List.empty;
+assert.deepEqual(l.concat().toList(), []);
+assert.deepEqual(l.nil(), true);
+assert.deepEqual(l.any((x) =&#x3E; x === 1), false);
+assert.deepEqual(l.all(Boolean), true);
+assert.deepEqual(l.elem(0), false);
+assert.deepEqual(l.elemIndex(0), -1);
+assert.deepEqual(l.find(Boolean), undefined);
+assert.deepEqual(l.findIndex(Boolean), -1);</code></pre></li><li class="test pass fast"><h2>zipWith tests<span class="duration">0ms</span></h2><pre><code>const l0 = List.iterate(inc, 0);
+const l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const l2 = l0.take(10);
+assert.deepEqual(l1 === l2, false);
+assert.deepEqual(l0.zipWith(times, l1).take(10).toList(),
+    [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]);</code></pre></li><li class="test pass fast"><h2>iterate tests<span class="duration">0ms</span></h2><pre><code>l = List.iterate(inc, 0).take(5);
+l.the();
+assert.deepEqual(List.iterate(inc, 0).take(1001).length(), 1001);
+assert.deepEqual(List.iterate(inc, 0).take(1001).reverse().length(), 1001);
+assert.deepEqual(List.iterate(inc, 0).findIndex((x) =&#x3E; x &#x3E; 1000), 1001);</code></pre></li><li class="test pass fast"><h2>[1,2,1,3,4] tests<span class="duration">0ms</span></h2><pre><code>l = List.fromList([1, 2, 1, 3, 4]);
+assert.deepEqual(l.scanl(plus, 0).toList(), [0, 1, 3, 4, 7, 11]);
+assert.deepEqual(l.reverse().scanr(plus, 0).toList(), [11, 7, 4, 3, 1, 0]);
+assert.deepEqual(l.last(), 4);
+assert.deepEqual(l.foldr(plus, 0), 11);
+assert.deepEqual(l.map(inc).toList(), [2, 3, 2, 4, 5]);</code></pre></li><li class="test pass fast"><h2>repeat tests<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.repeat(List.repeat(1)).concat().take(3).toList(), [1, 1, 1]);
+assert.deepEqual(List.iterate(inc, 3).take(5).toList(), [3, 4, 5, 6, 7]);
+assert.deepEqual(List.iterate(inc, 3).map(inc).take(3).toList(), [4, 5, 6]);
+assert.deepEqual(List.iterate(inc, 3).map(List.repeat).concat().take(3)
+    .toList(), [3, 3, 3]);
+assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);</code></pre></li><li class="test pass fast"><h2>zipWith tests<span class="duration">0ms</span></h2><pre><code>const l0 = List.iterate(inc, 0);
+const l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const l2 = l0.take(10);
+assert.deepEqual(l0.zipWith(times, l1).toList(), [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]);
+assert.deepEqual(List.repeat([1, 2, 3]).concat().take(4).toList(), [1, 2, 3, 1]);</code></pre></li><li class="test pass fast"><h2>the tests<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.fromList([]).the(), undefined);
+assert.deepEqual(List.fromList([0]).the(), 0);
+assert.deepEqual(List.fromList([1]).the(), 1);
+assert.deepEqual(List.fromList([0, 0, 0]).the(), 0);
+assert.deepEqual(List.fromList([1, 1, 1]).the(), 1);
+assert.deepEqual(List.fromList([0, 1, 2]).the(), undefined);
+assert.deepEqual(List.replicate(10, 1).append(List.repeat(2)).the(), undefined);</code></pre></li><li class="test pass fast"><h2>[0,1,...]<span class="duration">0ms</span></h2><pre><code>const l = List.iterate(inc, 0);
+assert.deepEqual(l.head(), 0);
+assert.deepEqual(l.tail().head(), 1);
+assert.deepEqual(l.tail().take(3).toList(), [1, 2, 3]);
+assert.deepEqual(l.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+assert.deepEqual(l.take(10).toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+assert.deepEqual(l.nil(), false);
+assert.deepEqual(l.foldr(constant), 0);
+assert.deepEqual(l.foldr(constant, undefined), undefined);
+assert.deepEqual(l.foldr(constant(17)), 17);
+assert.deepEqual(l.scanl(plus, 0).take(10).toList(), [0, 0, 1, 3, 6, 10, 15, 21, 28, 36]);
+assert.deepEqual(l.drop(10).take(10).toList(), [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+assert.deepEqual(l.any((x) =&#x3E; x === 3), true);</code></pre></li><li class="test pass fast"><h2>PI test<span class="duration">0ms</span></h2><pre><code>assert.deepEqual(List.PI.get(12), 9);</code></pre></li><li class="test pass fast"><h2>random tests<span class="duration">1ms</span></h2><pre><code>assert.deepEqual(List.repeat(2)
+    .zipWith(times,
+        List.cycle([1, 2, 3]))
+    .map((x) =&#x3E; x - 1)
+    .take(3)
+    .reverse()
+    .toList(),
+[5, 3, 1]);
+assert.deepEqual(List.repeat(2)
+    .zipWith(times,
+        List.cycle([1, 2, 3]))
+    .map((x) =&#x3E; x - 1)
+    .take(6)
+    .reverse()
+    .toList(),
+[5, 3, 1, 5, 3, 1]);
+assert.deepEqual(List.repeat([1, 2, 3])
+    .concat()
+    .take(4)
+    .toList(),
+[1, 2, 3, 1]);</code></pre></li><li class="test pass fast"><h2>Another Random Test<span class="duration">0ms</span></h2><pre><code>const l = List.cycle([1, 2, 3]);
+assert.deepEqual(l.head(), 1);
+assert.deepEqual(l.tail().take(6).toList(), [2, 3, 1, 2, 3, 1]);
+assert.deepEqual(l.filter(odd).take(6).toList(),
+    [1, 3, 1, 3, 1, 3]);
+assert.deepEqual(l.map((x) =&#x3E; x * x).take(5).toList(), [1, 4, 9, 1, 4]);
+assert.deepEqual(l.map((x) =&#x3E; x * x).tail().findIndex((x) =&#x3E; x === 1), 2);</code></pre></li></ul></li></ul>
+        </div>
+        <script>
+        function hideSuitesWithout(className) {
+    var suites = document.querySelectorAll('#report > .suite');
+
+    for (var i = 0; i < suites.length; i++) {
+        let suite = suites[i];
+
+        var els = suite.getElementsByClassName(className);
+        if (!els.length) {
+            suite.classList.add('hidden');
+        }
+    }
+}
+
+function unhide() {
+    var suites = document.getElementsByClassName('suite hidden');
+
+    while (suites.length) {
+        suites[0].classList.remove('hidden');
+    }
+}
+
+function togglePasses() {
+    var report = document.getElementById('report');
+
+    report.classList.toggle('hide-passes');
+
+    if (report.classList.contains('hide-passes')) {
+        hideSuitesWithout('test fail');
+    } else {
+        unhide();
+    }
+}
+
+document.getElementById('toggle-passes').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    this.classList.toggle('checked');
+
+    togglePasses();
+});
+
+var tests = document.getElementsByClassName('test');
+
+for (var i = 0; i < tests.length; i++) {
+    var elem = tests[i];
+    var head = elem.children[0];
+
+    head.onclick = function () {
+        var code = this.parentElement.children[1];
+        var display = code.style.display;
+
+        if (display && display === 'block') {
+            code.style.display = 'none';
+        } else {
+            code.style.display = 'block';
+        }
+    };
+}
+        </script>
+    </body>
+</html>

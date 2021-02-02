@@ -4,6 +4,8 @@
   "description": "Codewars Infinite List",
   "main": "index.js",
   "scripts": {
+    "jsdoc": "jsdoc List.js",
+    "mochadoc": "mocha --reporter mocha-simple-html-reporter --reporter-options output=out/test.report.html",
     "test": "mocha"
   },
   "repository": {
@@ -17,6 +19,8 @@
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "mocha": "^8.2.1"
+    "jsdoc": "^3.6.6",
+    "mocha": "^8.2.1",
+    "mocha-simple-html-reporter": "^1.1.0"
   }
 }

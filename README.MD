@@ -1,5 +1,9 @@
 # List. Any way you like.
 
+
+## [JSDoc Documentation](/out/List.html)
+## [Test Documentation](/out/test.report.html)
+
 Based on CodeWars 2kyu Kata: [Link to challenge](https://www.codewars.com/kata/59f7a040a5b820c684000046)
 
 JavaScript Arrays can only represent lists of finite length. Your job is to implement the List class, which must be able to represent both finite and infinite lists. It must support the class and instance methods specified below. Methods must not have side effects ( mutating any argument would be a side effect ).

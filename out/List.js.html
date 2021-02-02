@@ -1,4 +1,32 @@
-/* eslint-disable no-restricted-syntax */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: List.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: List.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable no-restricted-syntax */
 /**
  * @author Matthew Ifould
  * Represents a List of finite or infinite length
@@ -37,7 +65,7 @@ class List {
     static get PRIME() {
         function* primeFunction() {
             function isPrime(num) {
-                for (let i = 2, s = Math.sqrt(num); i <= s; i += 1) if (num % i === 0) return false;
+                for (let i = 2, s = Math.sqrt(num); i &lt;= s; i += 1) if (num % i === 0) return false;
                 return num > 1;
             }
             for (let i = 0; ; i += 1) {
@@ -219,7 +247,7 @@ class List {
      * @return {List} - A new List containing the first n elements of the list
      */
     take(quantity) {
-        if (quantity < 0) {
+        if (quantity &lt; 0) {
             return List.empty;
         }
         if (quantity > this.length()) {
@@ -228,7 +256,7 @@ class List {
         if (this.isInfinite) {
             const generator = this.values();
             const genList = [];
-            for (let i = 0; i < quantity; i += 1) {
+            for (let i = 0; i &lt; quantity; i += 1) {
                 genList.push(generator.next().value);
             }
             return new List(genList);
@@ -258,7 +286,7 @@ class List {
         if (quantity > this.length()) {
             return List.empty;
         }
-        if (quantity < 0) {
+        if (quantity &lt; 0) {
             return new List(this.list);
         }
         return new List(this.list.slice(quantity));
@@ -375,7 +403,7 @@ class List {
             const generator = this.values();
             if (end !== Infinity) {
                 const sliceList = [];
-                for (let i = 0; i < start + end - 1; i += 1) {
+                for (let i = 0; i &lt; start + end - 1; i += 1) {
                     const next = generator.next();
                     if (i >= start) {
                         sliceList.push(next.value);
@@ -386,7 +414,7 @@ class List {
             const sliceGen = function* sliceFunction() {
                 for (let i = 0; ; i += 1) {
                     const next = generator.next();
-                    if (i >= start && i < end) {
+                    if (i >= start &amp;&amp; i &lt; end) {
                         yield next.value;
                     }
                 }
@@ -487,7 +515,7 @@ class List {
                 if (findFunction(value)) return value;
             }
         }
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             const element = this.list[i];
             if (findFunction(element)) {
                 return element;
@@ -510,7 +538,7 @@ class List {
             }
             return -1;
         }
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             if (findFunction(this.get(i))) return i;
         }
         return -1;
@@ -535,7 +563,7 @@ class List {
                                 yield element;
                             }
                         } else {
-                            for (let i = 0; i < innerList.length(); i += 1) {
+                            for (let i = 0; i &lt; innerList.length(); i += 1) {
                                 const element = innerList.list[i];
                                 yield element;
                             }
@@ -550,7 +578,7 @@ class List {
             return new List(concatFunc);
         }
         const flattenedList = [];
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             // If this is a list of lists
             if (this.list[i] instanceof List) {
                 const internalList = this.list[i];
@@ -562,7 +590,7 @@ class List {
                 } else {
                     // create a generator of running list followed by infinite list
                     const concatGenerator = function* genFunc() {
-                        for (let j = 0; j < flattenedList.length; j += 1) {
+                        for (let j = 0; j &lt; flattenedList.length; j += 1) {
                             const element = flattenedList[j];
                             yield element;
                         }
@@ -606,14 +634,14 @@ class List {
     foldr(fn, x) {
         if (this.isInfinite) {
             // check if function returns a constant value ???
-            if (fn.length < 2) {
+            if (fn.length &lt; 2) {
                 if (arguments.length === 1) return fn(x || 0);
                 return x;
             }
             return (typeof fn !== 'function') ? fn : fn(x);
         }
         let accumulator = x;
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             const index = this.length() - i - 1;
             accumulator = fn(this.get(index), accumulator);
         }
@@ -634,7 +662,7 @@ class List {
             return undefined;
         }
         let accumulator = x;
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             accumulator = fn(accumulator, this.get(i));
         }
         return accumulator;
@@ -656,7 +684,7 @@ class List {
         }
         let accumulator = x;
         const listSteps = [x];
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             const index = this.length() - i - 1;
             accumulator = fn(this.get(index), accumulator);
             listSteps.unshift(accumulator);
@@ -686,7 +714,7 @@ class List {
         }
         let accumulator = x;
         const listSteps = [accumulator];
-        for (let i = 0; i < this.length(); i += 1) {
+        for (let i = 0; i &lt; this.length(); i += 1) {
             accumulator = fn(accumulator, this.get(i));
             listSteps.push(accumulator);
         }
@@ -736,7 +764,7 @@ class List {
         }
         if (!this.nil()) {
             const firstElement = this.list[0];
-            for (let i = 1; i < this.length(); i += 1) {
+            for (let i = 1; i &lt; this.length(); i += 1) {
                 if (firstElement !== this.list[i]) {
                     return undefined;
                 }
@@ -753,7 +781,7 @@ class List {
      * @return {List} - A new list including mapped elements from both lists
      */
     zipWith(fn, xs) {
-        if (this.isInfinite && xs.isInfinite) {
+        if (this.isInfinite &amp;&amp; xs.isInfinite) {
             const thisGenerator = this.values();
             const xsGenerator = xs.values();
             const genFunc = function* generatorFunc() {
@@ -768,7 +796,7 @@ class List {
         const other = Array.isArray(xs) ? List.fromList(xs) : xs;
         const length = Math.min(this.length(), other.length());
         const newList = [];
-        for (let i = 0; i < length; i += 1) {
+        for (let i = 0; i &lt; length; i += 1) {
             const element = this.get(i);
             const otherElement = other.get(i);
             newList.push(fn(element, otherElement));
@@ -778,3 +806,26 @@ class List {
 }
 
 module.exports = List;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="List.html">List</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Feb 02 2021 11:39:50 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
